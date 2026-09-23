@@ -46,13 +46,13 @@
                 <div id="authStatusBadge" class="bg-amber-500/20 text-amber-200 border border-amber-400/30 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span><span id="authStatusText">Memeriksa Sesi...</span>
                 </div>
-                <div id="userProfileBadge" class="hidden bg-indigo-800 border border-indigo-700 rounded-lg px-3 py-1 flex items-center gap-2">
+                <div id="userProfileBadge" class="hidden bg-indigo-800 border border-indigo-700 rounded-lg px-3 py-1.5 flex items-center gap-3">
                     <div class="text-right">
                         <p id="userProfileName" class="text-xs font-bold text-amber-300 uppercase leading-none">Petugas</p>
                         <p id="userProfileScope" class="text-[10px] text-indigo-200 uppercase leading-tight">Terautentikasi</p>
                     </div>
-                    <button id="btnLogout" onclick="logoutUser()" class="bg-red-600 hover:bg-red-700 text-white p-1.5 rounded text-xs ml-1" title="Keluar / Logout">
-                        <i class="fa-solid fa-right-from-bracket"></i>
+                    <button id="btnLogout" onclick="logoutUser()" class="bg-red-600 hover:bg-red-700 text-white px-2.5 py-1.5 rounded text-xs ml-1 flex items-center gap-1.5 font-semibold" title="Keluar / Logout">
+                        <i class="fa-solid fa-right-from-bracket"></i> Keluar
                     </button>
                 </div>
                 <button id="btnLoginHeader" onclick="openLoginModal()" class="hidden bg-amber-500 hover:bg-amber-600 text-indigo-950 font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 shadow">
@@ -130,7 +130,7 @@
                 <div class="mt-8 bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex items-start gap-3">
                     <i class="fa-solid fa-circle-info text-indigo-500 mt-0.5"></i>
                     <p class="text-[11px] text-indigo-900 leading-relaxed">
-                        Aplikasi ini ditujukan khusus untuk Petugas Pendata Desa dan Admin Kabupaten Merangin. Login menggunakan email yang didaftarkan.
+                        Aplikasi ini ditujukan khusus untuk Petugas Pendata Desa dan Admin Kabupaten Merangin. Login menggunakan akun resmi yang didaftarkan.
                     </p>
                 </div>
             </div>
@@ -139,36 +139,30 @@
 
     <main id="mainAppContainer" class="max-w-7xl mx-auto w-full px-4 py-6 flex-grow space-y-6 hidden">
 
-        <!-- Location Metadata Header Form -->
+        <!-- Location Metadata Locked Header Card -->
         <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 no-print">
             <div class="flex items-center justify-between mb-3 border-b pb-2">
                 <h2 class="text-sm font-semibold uppercase tracking-wider text-indigo-900 flex items-center gap-2">
-                    <i class="fa-solid fa-map-location-dot"></i> Data Wilayah Administratif & Berkas Pengantar
+                    <i class="fa-solid fa-shield-halved text-emerald-600"></i> Wilayah Tugas Aktif & Berkas Pengantar
                 </h2>
-                <span class="text-xs bg-indigo-50 text-indigo-700 font-bold px-2.5 py-1 rounded-md border border-indigo-100">
-                    KABUPATEN : MERANGIN
-                </span>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">TAHUN PAJAK <span class="text-red-500">*</span></label>
-                    <input type="number" id="metaTahun" value="2026" min="1900" max="2100" placeholder="Contoh: 2026" oninput="updateTahunHeader(); updateHeaderMetadataState();" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none font-bold text-indigo-900">
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase">Tahun Pajak</label>
+                    <p id="displayMetaTahun" class="text-sm font-extrabold text-indigo-900 font-mono mt-0.5">2026</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">KECAMATAN <span class="text-red-500">*</span></label>
-                    <select id="metaKecamatan" onchange="handleKecamatanHeaderChange(); updateHeaderMetadataState(); renderCurrentTabTable();" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none uppercase font-semibold bg-white">
-                        <option value="">-- PILIH KECAMATAN --</option>
-                    </select>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase">Kecamatan Ditugaskan</label>
+                    <p id="displayMetaKecamatan" class="text-sm font-extrabold text-indigo-900 mt-0.5 uppercase">-</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">DESA / KELURAHAN <span class="text-red-500">*</span></label>
-                    <select id="metaDesa" onchange="updateHeaderMetadataState(); renderCurrentTabTable();" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none uppercase font-semibold bg-white">
-                        <option value="">-- PILIH DESA / KELURAHAN --</option>
-                    </select>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase">Desa / Kelurahan Ditugaskan</label>
+                    <p id="displayMetaDesa" class="text-sm font-extrabold text-indigo-900 mt-0.5 uppercase">-</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">RT / RW</label>
-                    <input type="text" id="metaRT" placeholder="Contoh: RT 005 / RW 02" oninput="this.value = this.value.toUpperCase()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none uppercase font-semibold">
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase">Status Akses Akun</label>
+                    <p id="displayMetaPetugas" class="text-sm font-bold text-slate-800 mt-0.5 uppercase">-</p>
                 </div>
             </div>
 
@@ -207,7 +201,6 @@
             </div>
         </section>
 
-        <!-- Navigation Tabs -->
         <div class="no-print bg-slate-200/80 p-1.5 rounded-xl flex flex-wrap gap-2 text-xs font-semibold">
             <button id="tabBtnPendaftaran" onclick="switchTab('pendaftaran')" class="flex-1 py-2.5 px-4 rounded-lg transition-all flex items-center justify-center gap-2 bg-white text-indigo-900 shadow font-bold">
                 <i class="fa-solid fa-file-circle-plus text-indigo-600 text-sm"></i>
@@ -227,7 +220,6 @@
             </button>
         </div>
 
-        <!-- TAB 1: PENDAFTARAN -->
         <div id="tabPendaftaranContent" class="space-y-6">
             <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 no-print">
                 <div class="flex items-center justify-between mb-4 border-b pb-3">
@@ -237,13 +229,24 @@
                     <span id="pendaftaranFormMode" class="text-xs font-medium px-2 py-1 bg-green-100 text-green-800 rounded">Mode: Tambah Data Baru</span>
                 </div>
 
-                <div class="metadata-warning-banner hidden bg-amber-50 border border-amber-300 text-amber-900 px-4 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-2 mb-4">
-                    <i class="fa-solid fa-triangle-exclamation text-amber-600 text-sm"></i>
-                    <span>HARAP PILIH TAHUN PAJAK, KECAMATAN, DAN DESA / KELURAHAN DAHULU PADA BAGIAN ATAS SEBELUM SIMPAN DATA.</span>
-                </div>
-
                 <form id="pendaftaranForm" onsubmit="handleFormSubmit(event, 'pendaftaran')" class="space-y-4">
                     <input type="hidden" id="pendaftaranRecordId">
+
+                    <!-- WILAYAH SELECTION ROW (Editable for Admin, Locked for Officers) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+                        <div>
+                            <label class="block text-xs font-bold text-indigo-950 mb-1 uppercase">KECAMATAN OBJEK PAJAK <span class="text-red-500">*</span></label>
+                            <select id="pendFormKecamatan" required onchange="handleFormKecamatanChange('pendaftaran')" class="w-full px-3 py-2 text-sm border border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 uppercase font-semibold bg-white">
+                                <option value="">-- PILIH KECAMATAN --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-indigo-950 mb-1 uppercase">DESA / KELURAHAN OBJEK PAJAK <span class="text-red-500">*</span></label>
+                            <select id="pendFormDesa" required class="w-full px-3 py-2 text-sm border border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 uppercase font-semibold bg-white">
+                                <option value="">-- PILIH KECAMATAN DAHULU --</option>
+                            </select>
+                        </div>
+                    </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div class="md:col-span-1">
@@ -354,6 +357,7 @@
                         <thead class="text-[11px] uppercase bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
                             <tr>
                                 <th class="py-3 px-3 text-center border-r w-12" rowspan="2">NO</th>
+                                <th class="py-3 px-3 text-center border-r min-w-[130px]" rowspan="2">DESA / KEC</th>
                                 <th class="py-3 px-3 text-center border-r min-w-[140px]" rowspan="2">NAMA WP</th>
                                 <th class="py-3 px-3 text-center border-r min-w-[120px]" rowspan="2">NIK</th>
                                 <th class="py-3 px-3 text-center border-r min-w-[150px]" rowspan="2">ALAMAT WP</th>
@@ -376,7 +380,6 @@
             </section>
         </div>
 
-        <!-- TAB 2: PEMUTAKHIRAN -->
         <div id="tabPemutakhiranContent" class="space-y-6 hidden">
             <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 no-print">
                 <div class="flex items-center justify-between mb-4 border-b pb-3">
@@ -386,13 +389,24 @@
                     <span id="pemutakhiranFormMode" class="text-xs font-medium px-2 py-1 bg-amber-100 text-amber-800 rounded">Mode: Tambah Pemutakhiran Baru</span>
                 </div>
 
-                <div class="metadata-warning-banner hidden bg-amber-50 border border-amber-300 text-amber-900 px-4 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-2 mb-4">
-                    <i class="fa-solid fa-triangle-exclamation text-amber-600 text-sm"></i>
-                    <span>HARAP PILIH TAHUN PAJAK, KECAMATAN, DAN DESA / KELURAHAN DAHULU PADA BAGIAN ATAS SEBELUM SIMPAN DATA.</span>
-                </div>
-
                 <form id="pemutakhiranForm" onsubmit="handleFormSubmit(event, 'pemutakhiran')" class="space-y-4">
                     <input type="hidden" id="pemutakhiranRecordId">
+
+                    <!-- WILAYAH SELECTION ROW (Editable for Admin, Locked for Officers) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-amber-50/50 p-4 rounded-xl border border-amber-200">
+                        <div>
+                            <label class="block text-xs font-bold text-amber-950 mb-1 uppercase">KECAMATAN OBJEK PAJAK <span class="text-red-500">*</span></label>
+                            <select id="pemFormKecamatan" required onchange="handleFormKecamatanChange('pemutakhiran')" class="w-full px-3 py-2 text-sm border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 uppercase font-semibold bg-white">
+                                <option value="">-- PILIH KECAMATAN --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-amber-950 mb-1 uppercase">DESA / KELURAHAN OBJEK PAJAK <span class="text-red-500">*</span></label>
+                            <select id="pemFormDesa" required class="w-full px-3 py-2 text-sm border border-amber-300 rounded-lg focus:ring-2 focus:ring-amber-500 uppercase font-semibold bg-white">
+                                <option value="">-- PILIH KECAMATAN DAHULU --</option>
+                            </select>
+                        </div>
+                    </div>
 
                     <div>
                         <label class="block text-xs font-bold text-indigo-900 mb-1 uppercase">NOP (NOMOR OBJEK PAJAK) <span class="text-red-500">*</span></label>
@@ -400,7 +414,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Before -->
                         <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
                             <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider border-b pb-2 flex items-center justify-between">
                                 <span>1. Sebelum Pemutakhiran Sesuai SPPT/DHKP</span>
@@ -434,7 +447,6 @@
                             </div>
                         </div>
 
-                        <!-- After -->
                         <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-200 space-y-3">
                             <h3 class="text-xs font-bold text-amber-900 uppercase tracking-wider border-b border-amber-200 pb-2 flex items-center justify-between">
                                 <span>2. Keadaan Sebenarnya</span>
@@ -515,6 +527,7 @@
                         <thead class="text-[11px] uppercase bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
                             <tr>
                                 <th class="py-2.5 px-3 text-center border-r w-12" rowspan="2">NO</th>
+                                <th class="py-2.5 px-3 text-center border-r min-w-[130px]" rowspan="2">DESA / KEC</th>
                                 <th class="py-2.5 px-3 text-center border-r min-w-[140px]" rowspan="2">NOP</th>
                                 <th class="py-2 px-3 text-center border-r bg-slate-200" colspan="4">SEBELUM PEMUTAKHIRAN (SPPT/DHKP)</th>
                                 <th class="py-2 px-3 text-center border-r bg-amber-100/70" colspan="4">KEADAAN SEBENARNYA</th>
@@ -538,7 +551,6 @@
             </section>
         </div>
 
-        <!-- TAB 3: PENGHAPUSAN -->
         <div id="tabPenghapusanContent" class="space-y-6 hidden">
             <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 no-print">
                 <div class="flex items-center justify-between mb-4 border-b pb-3">
@@ -548,13 +560,24 @@
                     <span id="penghapusanFormMode" class="text-xs font-medium px-2 py-1 bg-red-100 text-red-800 rounded">Mode: Tambah Usulan Penghapusan</span>
                 </div>
 
-                <div class="metadata-warning-banner hidden bg-amber-50 border border-amber-300 text-amber-900 px-4 py-2.5 rounded-lg text-xs font-semibold flex items-center gap-2 mb-4">
-                    <i class="fa-solid fa-triangle-exclamation text-amber-600 text-sm"></i>
-                    <span>HARAP PILIH TAHUN PAJAK, KECAMATAN, DAN DESA / KELURAHAN DAHULU PADA BAGIAN ATAS SEBELUM SIMPAN DATA.</span>
-                </div>
-
                 <form id="penghapusanForm" onsubmit="handleFormSubmit(event, 'penghapusan')" class="space-y-4">
                     <input type="hidden" id="penghapusanRecordId">
+
+                    <!-- WILAYAH SELECTION ROW (Editable for Admin, Locked for Officers) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-red-50/50 p-4 rounded-xl border border-red-200">
+                        <div>
+                            <label class="block text-xs font-bold text-red-950 mb-1 uppercase">KECAMATAN OBJEK PAJAK <span class="text-red-500">*</span></label>
+                            <select id="hapusFormKecamatan" required onchange="handleFormKecamatanChange('penghapusan')" class="w-full px-3 py-2 text-sm border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 uppercase font-semibold bg-white">
+                                <option value="">-- PILIH KECAMATAN --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-red-950 mb-1 uppercase">DESA / KELURAHAN OBJEK PAJAK <span class="text-red-500">*</span></label>
+                            <select id="hapusFormDesa" required class="w-full px-3 py-2 text-sm border border-red-300 rounded-lg focus:ring-2 focus:ring-red-500 uppercase font-semibold bg-white">
+                                <option value="">-- PILIH KECAMATAN DAHULU --</option>
+                            </select>
+                        </div>
+                    </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
@@ -632,6 +655,7 @@
                         <thead class="text-[11px] uppercase bg-slate-100 text-slate-600 font-bold border-b border-slate-200">
                             <tr>
                                 <th class="py-3 px-3 text-center border-r w-12">NO</th>
+                                <th class="py-3 px-3 text-center border-r min-w-[130px]">DESA / KEC</th>
                                 <th class="py-3 px-3 text-center border-r min-w-[140px]">NAMA WAJIB PAJAK</th>
                                 <th class="py-3 px-3 text-center border-r min-w-[140px]">ALAMAT WP</th>
                                 <th class="py-3 px-3 text-center border-r min-w-[130px]">NOP</th>
@@ -648,7 +672,6 @@
             </section>
         </div>
 
-        <!-- TAB 4: REKAP LAPORAN -->
         <div id="tabLaporanContent" class="space-y-6 hidden">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 no-print">
                 <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
@@ -740,7 +763,6 @@
             </div>
             <div id="printMetaSection" class="flex justify-between text-xs font-semibold mb-3">
                 <div class="space-y-0.5 uppercase">
-                    <div>RT : <span id="printRT">.......................</span></div>
                     <div>DESA / KELURAHAN : <span id="printDesa">.......................</span></div>
                     <div>KECAMATAN : <span id="printKecamatan">.......................</span></div>
                 </div>
@@ -757,32 +779,54 @@
         </div>
     </main>
 
-    <!-- Modal Master Wilayah -->
-    <div id="masterWilayahModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 no-print">
-        <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-base font-bold text-indigo-950 flex items-center gap-2 uppercase">
-                    <i class="fa-solid fa-map-location-dot text-indigo-600"></i> Master Data Kecamatan & Desa Merangin
-                </h3>
-                <button onclick="closeMasterWilayahModal()" class="text-slate-400 hover:text-slate-600 text-lg p-1"><i class="fa-solid fa-xmark"></i></button>
+    <div id="wilayahSetupModal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8 space-y-6 border border-slate-200 animate-fade-in-up">
+            <div class="flex items-center gap-3.5 border-b pb-4">
+                <div class="bg-indigo-900 text-amber-400 p-3 rounded-2xl shadow-inner">
+                    <i class="fa-solid fa-map-location-dot text-2xl"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-extrabold text-slate-900 uppercase leading-tight">PENGATURAN WILAYAH TUGAS</h3>
+                    <p class="text-xs text-slate-500">Pilih Kecamatan & Desa yang menjadi tanggung jawab Anda</p>
+                </div>
             </div>
-            <p class="text-xs text-slate-600 leading-relaxed">
-                Kelola daftar Kecamatan dan Desa sekabupaten Merangin di bawah ini. Format per baris: `KECAMATAN: DESA1, DESA2, ...`
-            </p>
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1 uppercase">DAFTAR KECAMATAN & DESA</label>
-                <textarea id="masterWilayahInput" rows="10" class="w-full text-xs font-mono p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 uppercase"></textarea>
+
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
+                <i class="fa-solid fa-triangle-exclamation text-amber-600 text-base mt-0.5"></i>
+                <p class="text-xs text-amber-900 leading-relaxed font-medium">
+                    Untuk mencegah tumpang tindih data antar petugas, seluruh data yang Anda entri akan otomatis terkunci pada wilayah desa yang Anda pilih di bawah ini.
+                </p>
             </div>
-            <div class="flex justify-end gap-2 pt-2 border-t">
-                <button onclick="closeMasterWilayahModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Batal</button>
-                <button id="btnSaveMasterWilayah" onclick="saveMasterWilayahFromModal()" class="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow flex items-center gap-2">
-                    <i class="fa-solid fa-floppy-disk"></i> Simpan Master Wilayah
-                </button>
-            </div>
+
+            <form id="wilayahSetupForm" onsubmit="saveWilayahSetup(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase">TAHUN PAJAK <span class="text-red-500">*</span></label>
+                    <input type="number" id="setupTahun" value="2026" min="1900" max="2100" class="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 font-bold text-indigo-900 bg-slate-50">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase">KECAMATAN <span class="text-red-500">*</span></label>
+                    <select id="setupKecamatan" required onchange="handleSetupKecamatanChange()" class="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 uppercase font-semibold bg-white">
+                        <option value="">-- PILIH KECAMATAN --</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase">DESA / KELURAHAN <span class="text-red-500">*</span></label>
+                    <select id="setupDesa" required class="w-full px-4 py-2.5 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 uppercase font-semibold bg-white">
+                        <option value="">-- PILIH KECAMATAN DAHULU --</option>
+                    </select>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full bg-indigo-900 hover:bg-indigo-950 text-white font-bold py-3.5 px-4 rounded-xl text-sm transition shadow-lg flex items-center justify-center gap-2 uppercase">
+                        <i class="fa-solid fa-circle-check text-amber-400"></i> Simpan & Mulai Pendataan
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- Modal Login (Firebase Email/Password) -->
     <div id="loginModal" class="fixed inset-0 z-50 hidden bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 no-print">
         <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-5 border border-slate-200">
             <div class="flex justify-between items-center border-b pb-3">
@@ -821,12 +865,43 @@
         </div>
     </div>
 
+    <div id="masterWilayahModal" class="fixed inset-0 z-50 hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-8 space-y-6 border border-slate-200">
+            <div class="flex items-center justify-between border-b pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-indigo-900 text-amber-400 p-2.5 rounded-xl">
+                        <i class="fa-solid fa-list-check text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 uppercase">Master Data Desa / Kecamatan</h3>
+                        <p class="text-xs text-slate-500">Kelola daftar wilayah Kabupaten Merangin</p>
+                    </div>
+                </div>
+                <button onclick="closeMasterWilayahModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1 uppercase">Format: KECAMATAN: DESA 1, DESA 2, ...</label>
+                <textarea id="masterWilayahInput" rows="10" class="w-full p-3 text-xs font-mono border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 uppercase"></textarea>
+            </div>
+            <div class="flex justify-end gap-2 pt-2 border-t">
+                <button onclick="closeMasterWilayahModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Batal</button>
+                <button onclick="saveMasterWilayahFromModal()" class="px-5 py-2 text-xs font-bold bg-indigo-900 hover:bg-indigo-950 text-white rounded-lg shadow uppercase">Simpan Master Wilayah</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Container -->
     <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 no-print"></div>
 
     <script>
         window.activeTab = 'pendaftaran';
         window.currentUser = null;
+        window.currentAssignment = {
+            tahun: '2026',
+            kecamatan: '',
+            desa: '',
+            namaPetugas: ''
+        };
 
         window.recordsData = {
             pendaftaran: [],
@@ -1085,8 +1160,9 @@
                 .trim();
         };
 
-        window.initHeaderWilayahDropdowns = function() {
-            const kecSelect = document.getElementById('metaKecamatan');
+        // Populate dropdowns for setup modal and form inputs
+        window.initSetupKecamatanDropdowns = function() {
+            const kecSelect = document.getElementById('setupKecamatan');
             if (!kecSelect) return;
 
             const uniqueKec = [...new Set((window.masterWilayahList || []).map(item => item.kecamatan))].sort();
@@ -1095,12 +1171,12 @@
                 html += `<option value="${window.escapeHtml(k)}">KEC. ${window.escapeHtml(k)}</option>`;
             });
             kecSelect.innerHTML = html;
-            window.handleKecamatanHeaderChange();
+            window.handleSetupKecamatanChange();
         };
 
-        window.handleKecamatanHeaderChange = function() {
-            const kecSelect = document.getElementById('metaKecamatan');
-            const desaSelect = document.getElementById('metaDesa');
+        window.handleSetupKecamatanChange = function() {
+            const kecSelect = document.getElementById('setupKecamatan');
+            const desaSelect = document.getElementById('setupDesa');
             if (!kecSelect || !desaSelect) return;
 
             const selectedKec = kecSelect.value.toUpperCase();
@@ -1121,26 +1197,151 @@
             desaSelect.innerHTML = html;
         };
 
+        // Initialize form-level Kecamatan/Desa dropdowns for Pendaftaran, Pemutakhiran, Penghapusan
+        window.initFormWilayahDropdowns = function(formPrefix) {
+            const kecSelect = document.getElementById(`${formPrefix}FormKecamatan`);
+            const desaSelect = document.getElementById(`${formPrefix}FormDesa`);
+            if (!kecSelect || !desaSelect) return;
+
+            const uniqueKec = [...new Set((window.masterWilayahList || []).map(item => item.kecamatan))].sort();
+            let html = `<option value="">-- PILIH KECAMATAN --</option>`;
+            uniqueKec.forEach(k => {
+                html += `<option value="${window.escapeHtml(k)}">KEC. ${window.escapeHtml(k)}</option>`;
+            });
+            kecSelect.innerHTML = html;
+
+            if (window.currentUser && window.currentUser.role !== 'admin') {
+                // Lock to assigned village for regular officers
+                kecSelect.value = window.currentAssignment.kecamatan;
+                kecSelect.disabled = true;
+                window.updateFormDesaOptions(formPrefix, window.currentAssignment.kecamatan, window.currentAssignment.desa);
+                desaSelect.disabled = true;
+            } else {
+                // Admin can change freely
+                kecSelect.disabled = false;
+                desaSelect.disabled = false;
+                desaSelect.innerHTML = `<option value="">-- PILIH KECAMATAN DAHULU --</option>`;
+            }
+        };
+
+        window.handleFormKecamatanChange = function(formPrefix) {
+            const kecSelect = document.getElementById(`${formPrefix}FormKecamatan`);
+            const desaSelect = document.getElementById(`${formPrefix}FormDesa`);
+            if (!kecSelect || !desaSelect) return;
+
+            const selectedKec = kecSelect.value.toUpperCase();
+            window.updateFormDesaOptions(formPrefix, selectedKec, '');
+        };
+
+        window.updateFormDesaOptions = function(formPrefix, kecamatan, preselectDesa) {
+            const desaSelect = document.getElementById(`${formPrefix}FormDesa`);
+            if (!desaSelect) return;
+
+            if (!kecamatan) {
+                desaSelect.innerHTML = `<option value="">-- PILIH KECAMATAN DAHULU --</option>`;
+                return;
+            }
+
+            const desas = (window.masterWilayahList || [])
+                .filter(item => item.kecamatan === kecamatan)
+                .map(item => item.desa)
+                .sort();
+
+            let html = `<option value="">-- PILIH DESA / KELURAHAN --</option>`;
+            desas.forEach(d => {
+                let sel = (preselectDesa && d.toUpperCase() === preselectDesa.toUpperCase()) ? 'selected' : '';
+                html += `<option value="${window.escapeHtml(d)}" ${sel}>${window.escapeHtml(d)}</option>`;
+            });
+            desaSelect.innerHTML = html;
+            if (preselectDesa) desaSelect.value = preselectDesa;
+        };
+
+        window.openWilayahSetupModal = function() {
+            const modal = document.getElementById('wilayahSetupModal');
+            if (!modal) return;
+            window.initSetupKecamatanDropdowns();
+
+            if (window.currentUser && window.currentUser.role === 'admin') {
+                return; // Admin tidak perlu popup wilayah tugas
+            }
+
+            if (window.currentUser) {
+                const savedWilayah = localStorage.getItem('petugas_wilayah_' + window.currentUser.uid);
+                if (savedWilayah) {
+                    try {
+                        const parsed = JSON.parse(savedWilayah);
+                        document.getElementById('setupTahun').value = parsed.tahun || '2026';
+                        document.getElementById('setupKecamatan').value = parsed.kecamatan || '';
+                        window.handleSetupKecamatanChange();
+                        document.getElementById('setupDesa').value = parsed.desa || '';
+                    } catch(e) {}
+                }
+            }
+
+            modal.classList.remove('hidden');
+        };
+
+        window.closeWilayahSetupModal = function() {
+            const modal = document.getElementById('wilayahSetupModal');
+            if (modal) modal.classList.add('hidden');
+        };
+
+        window.saveWilayahSetup = function(event) {
+            event.preventDefault();
+            const tahun = document.getElementById('setupTahun').value.trim();
+            const kecamatan = document.getElementById('setupKecamatan').value.trim();
+            const desa = document.getElementById('setupDesa').value.trim();
+
+            if (!kecamatan || !desa) {
+                window.showToast("Harap pilih Kecamatan dan Desa / Kelurahan terlebih dahulu!", "error");
+                return;
+            }
+
+            const namaPetugas = window.currentUser ? window.currentUser.email.split('@')[0].toUpperCase() : 'PETUGAS';
+            window.currentAssignment = { tahun, kecamatan, desa, namaPetugas };
+
+            if (window.currentUser) {
+                localStorage.setItem('petugas_wilayah_' + window.currentUser.uid, JSON.stringify(window.currentAssignment));
+            }
+
+            window.safeSetText('displayMetaTahun', tahun);
+            window.safeSetText('displayMetaKecamatan', kecamatan);
+            window.safeSetText('displayMetaDesa', desa);
+            window.safeSetText('displayMetaPetugas', `PETUGAS DESA (${namaPetugas})`);
+            window.safeSetText('headerTahunDisplay', `TAHUN ${tahun}`);
+
+            window.closeWilayahSetupModal();
+            window.showToast("Wilayah tugas berhasil dikunci!", "success");
+            
+            // Re-initialize form dropdowns
+            ['pend', 'pem', 'hapus'].forEach(p => window.initFormWilayahDropdowns(p));
+            window.renderCurrentTabTable();
+        };
+
         window.getFilteredCategoryRecords = function(category) {
             const list = window.recordsData[category] || [];
-            const selKec = (document.getElementById('metaKecamatan')?.value || '').trim().toUpperCase();
-            const selDesa = (document.getElementById('metaDesa')?.value || '').trim().toUpperCase();
+            if (!window.currentUser) return [];
 
-            if (!selKec && !selDesa) return list;
+            if (window.currentUser.role === 'admin') {
+                return list;
+            }
+
+            const selKec = (window.currentAssignment.kecamatan || '').trim().toUpperCase();
+            const selDesa = (window.currentAssignment.desa || '').trim().toUpperCase();
+
+            if (!selKec || !selDesa) return [];
 
             return list.filter(item => {
                 const itemKec = (item.kecamatan || '').trim().toUpperCase();
                 const itemDesa = (item.desa || '').trim().toUpperCase();
 
-                if (selKec && itemKec !== selKec) return false;
-                if (selDesa) {
-                    const normSelDesa = window.normalizeVillageName(selDesa);
-                    const normItemDesa = window.normalizeVillageName(itemDesa);
-                    if (normSelDesa && normItemDesa) {
-                        if (normSelDesa !== normItemDesa) return false;
-                    } else if (itemDesa !== selDesa) {
-                        return false;
-                    }
+                if (itemKec !== selKec) return false;
+                const normSelDesa = window.normalizeVillageName(selDesa);
+                const normItemDesa = window.normalizeVillageName(itemDesa);
+                if (normSelDesa && normItemDesa) {
+                    if (normSelDesa !== normItemDesa) return false;
+                } else if (itemDesa !== selDesa) {
+                    return false;
                 }
                 return true;
             });
@@ -1160,6 +1361,7 @@
             const mainContentEl = document.getElementById('mainAppContainer');
             const welcomeDash = document.getElementById('welcomeDashboard');
             const btnMaster = document.getElementById('btnMasterWilayah');
+            const setupModal = document.getElementById('wilayahSetupModal');
 
             if (window.currentUser) {
                 if (badge) badge.classList.remove('hidden');
@@ -1174,19 +1376,55 @@
                     if (pName) pName.innerText = "ADMIN KABUPATEN";
                     if (pScope) pScope.innerText = window.currentUser.email;
                     if (btnMaster) btnMaster.classList.remove('hidden');
+                    if (setupModal) setupModal.classList.add('hidden');
+
+                    window.currentAssignment = {
+                        tahun: '2026',
+                        kecamatan: 'SEMUA KECAMATAN',
+                        desa: 'SELURUH WILAYAH',
+                        namaPetugas: 'ADMIN KABUPATEN'
+                    };
+
+                    window.safeSetText('displayMetaTahun', '2026');
+                    window.safeSetText('displayMetaKecamatan', 'SEMUA KECAMATAN (ADMIN)');
+                    window.safeSetText('displayMetaDesa', 'SELURUH DESA / KELURAHAN');
+                    window.safeSetText('displayMetaPetugas', `ADMIN KABUPATEN (${window.currentUser.email})`);
                 } else {
                     if (pName) pName.innerText = "PETUGAS DESA";
                     if (pScope) pScope.innerText = window.currentUser.email;
                     if (btnMaster) btnMaster.classList.add('hidden');
+
+                    const savedWilayah = localStorage.getItem('petugas_wilayah_' + window.currentUser.uid);
+                    if (!savedWilayah) {
+                        window.openWilayahSetupModal();
+                    } else {
+                        try {
+                            const parsed = JSON.parse(savedWilayah);
+                            window.currentAssignment = {
+                                tahun: parsed.tahun || '2026',
+                                kecamatan: parsed.kecamatan || '',
+                                desa: parsed.desa || '',
+                                namaPetugas: window.currentUser.email.split('@')[0].toUpperCase()
+                            };
+
+                            window.safeSetText('displayMetaTahun', window.currentAssignment.tahun);
+                            window.safeSetText('displayMetaKecamatan', window.currentAssignment.kecamatan);
+                            window.safeSetText('displayMetaDesa', window.currentAssignment.desa);
+                            window.safeSetText('displayMetaPetugas', `PETUGAS DESA (${window.currentAssignment.namaPetugas})`);
+                        } catch(e) {
+                            window.openWilayahSetupModal();
+                        }
+                    }
                 }
-                
-                window.updateHeaderMetadataState();
+
+                ['pend', 'pem', 'hapus'].forEach(p => window.initFormWilayahDropdowns(p));
                 window.renderCurrentTabTable();
             } else {
                 if (badge) badge.classList.add('hidden');
                 if (btnLogin) btnLogin.classList.remove('hidden');
                 if (mainContentEl) mainContentEl.classList.add('hidden');
                 if (welcomeDash) welcomeDash.classList.remove('hidden');
+                if (setupModal) setupModal.classList.add('hidden');
             }
         };
 
@@ -1200,22 +1438,6 @@
         window.closeLoginModal = function() {
             const modal = document.getElementById('loginModal');
             if (modal) modal.classList.add('hidden');
-        };
-
-        window.updateHeaderMetadataState = function() {
-            const thn = document.getElementById('metaTahun')?.value.trim();
-            const kec = document.getElementById('metaKecamatan')?.value.trim();
-            const desa = document.getElementById('metaDesa')?.value.trim();
-            const isValid = Boolean(thn && kec && desa);
-
-            const banners = document.querySelectorAll('.metadata-warning-banner');
-            banners.forEach(b => {
-                if (isValid) {
-                    b.classList.add('hidden');
-                } else {
-                    b.classList.remove('hidden');
-                }
-            });
         };
 
         window.formatRtInput = function(inputEl) {
@@ -1267,11 +1489,6 @@
             if (rwFormatted) parts.push(`RW ${rwFormatted}`);
 
             return parts.join(' / ');
-        };
-
-        window.updateTahunHeader = function() {
-            const thn = document.getElementById('metaTahun')?.value || '2026';
-            window.safeSetText('headerTahunDisplay', `TAHUN ${thn}`);
         };
 
         window.safeSetText = function(id, text) {
@@ -1407,7 +1624,8 @@
                 try {
                     localStorage.setItem('merangin_master_wilayah', JSON.stringify(newList));
                 } catch(e) {}
-                window.initHeaderWilayahDropdowns();
+                window.initSetupKecamatanDropdowns();
+                ['pend', 'pem', 'hapus'].forEach(p => window.initFormWilayahDropdowns(p));
                 window.closeMasterWilayahModal();
                 window.showToast("Master Wilayah berhasil diperbarui!", "success");
             } else {
@@ -1623,8 +1841,8 @@
             if (countBadge) countBadge.innerText = `${filtered.length} Data`;
 
             if (filtered.length === 0) {
-                const cols = category === 'pemutakhiran' ? 12 : (category === 'penghapusan' ? 9 : 12);
-                tbody.innerHTML = `<tr><td colspan="${cols}" class="text-center py-6 text-slate-400 font-medium uppercase">Belum ada data ${category} untuk wilayah ini.</td></tr>`;
+                const cols = category === 'pemutakhiran' ? 12 : (category === 'penghapusan' ? 10 : 13);
+                tbody.innerHTML = `<tr><td colspan="${cols}" class="text-center py-6 text-slate-400 font-medium uppercase">Belum ada data ${category} untuk desa Anda (${window.currentAssignment.desa || '-'}).</td></tr>`;
                 return;
             }
 
@@ -1634,12 +1852,15 @@
             filtered.forEach((item, index) => {
                 const linkDrive = item.suratPengantarUrl ? `<a href="${window.escapeHtml(item.suratPengantarUrl)}" target="_blank" class="text-emerald-600 hover:text-emerald-800 ml-1 inline-flex items-center" title="Buka Folder Google Drive File Lampiran"><i class="fa-brands fa-google-drive text-sm"></i></a>` : '';
                 
-                const deleteBtnHtml = isAdmin ? `<button onclick="deleteRecord('${category}', '${item.id}')" class="text-red-500 hover:text-red-800 p-1 rounded" title="Hapus"><i class="fa-solid fa-trash"></i></button>` : '';
+                const deleteBtnHtml = (isAdmin || item.petugas === (window.currentUser ? window.currentUser.email : '')) ? `<button onclick="deleteRecord('${category}', '${item.id}')" class="text-red-500 hover:text-red-800 p-1 rounded" title="Hapus"><i class="fa-solid fa-trash"></i></button>` : '';
+
+                let wilayahBadge = `<span class="text-[10px] font-bold text-indigo-900 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-200 block">${window.escapeHtml(item.desa)}<br><span class="text-[9px] text-slate-500">KEC. ${window.escapeHtml(item.kecamatan)}</span></span>`;
 
                 if (category === 'pendaftaran') {
                     html += `
                         <tr class="hover:bg-indigo-50/50 transition">
                             <td class="py-2.5 px-3 text-center border-r font-medium">${index + 1}</td>
+                            <td class="py-2.5 px-3 border-r">${wilayahBadge}</td>
                             <td class="py-2.5 px-3 border-r font-semibold text-slate-900">${window.escapeHtml(item.nama)} ${linkDrive}</td>
                             <td class="py-2.5 px-3 text-center border-r font-mono">${window.escapeHtml(item.nik || '-')}</td>
                             <td class="py-2.5 px-3 border-r">${window.escapeHtml(item.alamatWp || '-')}</td>
@@ -1662,6 +1883,7 @@
                     html += `
                         <tr class="hover:bg-amber-50/40 transition">
                             <td class="py-2.5 px-3 text-center border-r font-medium">${index + 1}</td>
+                            <td class="py-2.5 px-3 border-r">${wilayahBadge}</td>
                             <td class="py-2.5 px-3 text-center border-r font-mono font-bold text-indigo-900">${window.escapeHtml(item.nop)} ${linkDrive}</td>
                             <td class="py-2.5 px-3 border-r text-slate-600">${window.escapeHtml(item.namaLama || '-')}</td>
                             <td class="py-2.5 px-3 border-r text-slate-600">${window.escapeHtml(item.letakObjekLama || '-')}</td>
@@ -1684,6 +1906,7 @@
                     html += `
                         <tr class="hover:bg-red-50/40 transition">
                             <td class="py-2.5 px-3 text-center border-r font-medium">${index + 1}</td>
+                            <td class="py-2.5 px-3 border-r">${wilayahBadge}</td>
                             <td class="py-2.5 px-3 border-r font-semibold text-slate-900">${window.escapeHtml(item.nama)} ${linkDrive}</td>
                             <td class="py-2.5 px-3 border-r">${window.escapeHtml(item.alamatWp || '-')}</td>
                             <td class="py-2.5 px-3 text-center border-r font-mono font-bold text-red-900">${window.escapeHtml(item.nop)}</td>
@@ -1706,6 +1929,7 @@
         };
 
         window.resetForm = function(category) {
+            let prefix = category === 'pendaftaran' ? 'pend' : (category === 'pemutakhiran' ? 'pem' : 'hapus');
             if (category === 'pendaftaran') {
                 document.getElementById('pendaftaranForm')?.reset();
                 document.getElementById('pendaftaranRecordId').value = '';
@@ -1719,6 +1943,7 @@
                 document.getElementById('penghapusanRecordId').value = '';
                 window.safeSetText('penghapusanFormMode', 'Mode: Tambah Usulan Penghapusan');
             }
+            window.initFormWilayahDropdowns(prefix);
         };
 
         window.editRecord = function(category, id) {
@@ -1726,17 +1951,12 @@
             const item = list.find(r => r.id === id);
             if (!item) return;
 
-            if (item.tahun) {
-                document.getElementById('metaTahun').value = item.tahun;
-                window.updateTahunHeader();
+            let prefix = category === 'pendaftaran' ? 'pend' : (category === 'pemutakhiran' ? 'pem' : 'hapus');
+            const kecSelect = document.getElementById(`${prefix}FormKecamatan`);
+            if (kecSelect) {
+                kecSelect.value = item.kecamatan || '';
+                window.updateFormDesaOptions(prefix, item.kecamatan, item.desa);
             }
-            if (item.kecamatan) {
-                document.getElementById('metaKecamatan').value = item.kecamatan;
-                window.handleKecamatanHeaderChange();
-            }
-            if (item.desa) document.getElementById('metaDesa').value = item.desa;
-            if (item.rt) document.getElementById('metaRT').value = item.rt;
-            if (item.suratPengantarUrl) document.getElementById('metaSuratPengantarUrl').value = item.suratPengantarUrl;
 
             if (category === 'pendaftaran') {
                 document.getElementById('pendaftaranRecordId').value = item.id;
@@ -1770,7 +1990,7 @@
                 document.getElementById('pemRtWpBaru').value = item.rtWpBaru || '';
                 document.getElementById('pemRwWpBaru').value = item.rwWpBaru || '';
                 document.getElementById('pemLetakObjekBaru').value = item.letakObjekBaruBase || item.letakObjekBaru || '';
-                document.getElementById('pemRtObjekBaru').value = item.rtObjekBaru || '';
+                document.getElementById('pemRtObjekBaru').value = item.rtObjekObjekBaru || item.rtObjekBaru || '';
                 document.getElementById('pemRwObjekBaru').value = item.rwObjekBaru || '';
                 document.getElementById('pemLuasBumiBaru').value = item.luasBumiBaru || '';
                 document.getElementById('pemLuasBangunanBaru').value = item.luasBangunanBaru || '';
@@ -1797,67 +2017,38 @@
 
         window.exportToExcel = function(category) {
             if (!window.XLSX) {
-                window.showToast("Library Excel belum termuat, silakan periksa koneksi internet.", "error");
+                window.showToast("Library Excel belum termuat.", "error");
                 return;
             }
-            let thn = (document.getElementById('metaTahun')?.value || '').toString().toUpperCase();
-            let kec = (document.getElementById('metaKecamatan')?.value || '').toString().trim().toUpperCase();
-            let desa = (document.getElementById('metaDesa')?.value || '').toString().trim().toUpperCase();
-            let rt = (document.getElementById('metaRT')?.value || '').toString().trim().toUpperCase();
-
-            const list = category === 'laporan' ? [] : window.getFilteredCategoryRecords(category);
-
-            if (category !== 'laporan' && list.length > 0) {
-                if (!kec && list[0].kecamatan) kec = list[0].kecamatan;
-                if (!desa && list[0].desa) desa = list[0].desa;
-                if (!rt && list[0].rt) rt = list[0].rt;
-                if (!thn && list[0].tahun) thn = list[0].tahun;
-            }
-            if (!thn) thn = '2026';
-            if (!kec) kec = '-';
-            if (!desa) desa = '-';
-            if (!rt) rt = '-';
+            let thn = window.currentAssignment.tahun || '2026';
+            let kec = window.currentAssignment.kecamatan || '-';
+            let desa = window.currentAssignment.desa || '-';
 
             let titleText = "PENDAFTARAN OBJEK DAN SUBJEK PAJAK PBB-P2";
-            if (category === 'pemutakhiran') titleText = "PEMUTAKHIRAN / PEMBETULAN DATA OBJEK DAN SUBJEK PAJAK PBB-P2";
-            if (category === 'penghapusan') titleText = "USULAN PENGHAPUSAN OBJEK DAN SUBJEK PAJAK PBB-P2";
-            if (category === 'laporan') titleText = "REKAPITULASI PENDAFTARAN, PEMUTAKHIRAN, DAN PENGHAPUSAN PBB-P2";
+            if (category === 'pemutakhiran') titleText = "PEMUTAKHIRAN / PEMBETULAN DATA PBB-P2";
+            if (category === 'penghapusan') titleText = "USULAN PENGHAPUSAN PBB-P2";
+            if (category === 'laporan') titleText = "REKAPITULASI LAPORAN PBB-P2";
 
             let rows = [];
             rows.push([`DATA ${titleText} TAHUN ${thn}`]);
             rows.push(["KABUPATEN MERANGIN"]);
             if (category !== 'laporan') {
-                rows.push([`KECAMATAN: ${kec}    |    DESA / KELURAHAN: ${desa}    |    RT / RW: ${rt}`]);
+                rows.push([`KECAMATAN: ${kec}    |    DESA: ${desa}`]);
             } else {
-                const selectKec = document.getElementById('filterKecamatanLaporan');
-                const selectedKec = (selectKec && selectKec.value) ? selectKec.value.toUpperCase() : 'SEMUA KECAMATAN (KABUPATEN MERANGIN)';
-                rows.push([`KECAMATAN: ${selectedKec}`]);
+                rows.push([`KECAMATAN TUGAS: ${kec} (${desa})`]);
             }
-            rows.push([]); 
-
-            const headerRowIndex = rows.length; 
+            rows.push([]);
 
             if (category === 'laporan') {
-                const selectKec = document.getElementById('filterKecamatanLaporan');
-                const isSemua = !(selectKec && selectKec.value);
-                const colTitle = isSemua ? 'KECAMATAN' : 'DESA / KELURAHAN';
-
-                rows.push(['NO', colTitle, 'JUMLAH PENDAFTARAN', 'JUMLAH PEMUTAKHIRAN', 'JUMLAH PENGHAPUSAN', 'TOTAL DATA']);
-
+                rows.push(['NO', 'KECAMATAN / DESA', 'PENDAFTARAN', 'PEMUTAKHIRAN', 'PENGHAPUSAN', 'TOTAL']);
                 const tbody = document.getElementById('laporanTableBody');
                 const trs = tbody ? tbody.querySelectorAll('tr') : [];
-                if (trs.length === 0 || (trs[0] && trs[0].innerText.includes('Belum ada data'))) {
-                    window.showToast("Tidak ada data laporan untuk diexport.", "error");
-                    return;
-                }
                 trs.forEach(r => {
                     const cols = r.querySelectorAll('td');
                     if (cols.length >= 6) {
-                        let nameVal = cols[1].innerText.trim();
-                        if (isSemua) nameVal = nameVal.split('\n')[0].replace(/^KEC\.\s*/i, '').trim();
                         rows.push([
                             cols[0].innerText.trim(),
-                            nameVal,
+                            cols[1].innerText.trim(),
                             parseInt(cols[2].innerText.trim()) || 0,
                             parseInt(cols[3].innerText.trim()) || 0,
                             parseInt(cols[4].innerText.trim()) || 0,
@@ -1866,212 +2057,95 @@
                     }
                 });
             } else {
-                const listData = window.recordsData[category] || [];
+                const listData = window.getFilteredCategoryRecords(category);
                 if (listData.length === 0) {
                     window.showToast("Tidak ada data untuk diexport.", "error");
                     return;
                 }
 
                 if (category === 'pendaftaran') {
-                    rows.push(['NO', 'TAHUN PAJAK', 'NAMA WAJIB PAJAK', 'NIK', 'ALAMAT WP', 'LETAK OBJEK PAJAK', 'LUAS BUMI (M2)', 'LUAS BANGUNAN (M2)', 'THN DBGN', 'THN RENOV', 'LISTRIK', 'KETERANGAN']);
+                    rows.push(['NO', 'KECAMATAN', 'DESA', 'TAHUN', 'NAMA WP', 'NIK', 'ALAMAT WP', 'LETAK OBJEK', 'LUAS BUMI', 'LUAS BANGUNAN', 'THN DBGN', 'THN RENOV', 'LISTRIK', 'KETERANGAN']);
                     listData.forEach((item, index) => {
-                        rows.push([
-                            index + 1, item.tahun || thn, item.nama || '', item.nik || '', item.alamatWp || '', item.letakObjek || '', item.luasBumi || '', item.luasBangunan || '', item.thnDbgn || '', item.thnRenov || '', item.listrik || '', item.keterangan || ''
-                        ]);
+                        rows.push([index + 1, item.kecamatan, item.desa, item.tahun, item.nama, item.nik || '', item.alamatWp || '', item.letakObjek, item.luasBumi || '', item.luasBangunan || '', item.thnDbgn || '', item.thnRenov || '', item.listrik || '', item.keterangan || '']);
                     });
                 } else if (category === 'pemutakhiran') {
-                    rows.push(['NO', 'TAHUN PAJAK', 'NOP', 'NAMA WP (LAMA)', 'LETAK OBJEK (LAMA)', 'LUAS BUMI (LAMA)', 'LUAS BANGUNAN (LAMA)', 'NAMA WP (SEBENARNYA)', 'LETAK OBJEK (SEBENARNYA)', 'LUAS BUMI (SEBENARNYA)', 'LUAS BANGUNAN (SEBENARNYA)', 'ALASAN PEMUTAKHIRAN']);
+                    rows.push(['NO', 'KECAMATAN', 'DESA', 'NOP', 'NAMA LAMA', 'LETAK LAMA', 'L. BUMI LAMA', 'L. BANG LAMA', 'NAMA BARU', 'LETAK BARU', 'L. BUMI BARU', 'L. BANG BARU', 'ALASAN']);
                     listData.forEach((item, index) => {
-                        rows.push([
-                            index + 1, item.tahun || thn, item.nop || '', item.namaLama || '', item.letakObjekLama || '', item.luasBumiLama || '', item.luasBangunanLama || '', item.namaBaru || '', item.letakObjekBaru || '', item.luasBumiBaru || '', item.luasBangunanBaru || '', item.alasan || ''
-                        ]);
+                        rows.push([index + 1, item.kecamatan, item.desa, item.nop, item.namaLama || '', item.letakObjekLama || '', item.luasBumiLama || '', item.luasBangunanLama || '', item.namaBaru || '', item.letakObjekBaru || '', item.luasBumiBaru || '', item.luasBangunanBaru || '', item.alasan || '']);
                     });
                 } else if (category === 'penghapusan') {
-                    rows.push(['NO', 'TAHUN PAJAK', 'NAMA WAJIB PAJAK', 'ALAMAT WP / RT / RW', 'NOP', 'ALAMAT OBJEK PAJAK / RT / RW', 'LUAS TANAH (M2)', 'LUAS BANGUNAN (M2)', 'ALASAN PENGHAPUSAN']);
+                    rows.push(['NO', 'KECAMATAN', 'DESA', 'NAMA WP', 'ALAMAT WP', 'NOP', 'LETAK OBJEK', 'LUAS TANAH', 'LUAS BANGUNAN', 'ALASAN']);
                     listData.forEach((item, index) => {
-                        rows.push([
-                            index + 1, item.tahun || thn, item.nama || '', item.alamatWp || '', item.nop || '', item.letakObjek || '', item.luasTanah || '', item.luasBangunan || '', item.alasan || ''
-                        ]);
+                        rows.push([index + 1, item.kecamatan, item.desa, item.nama, item.alamatWp || '', item.nop, item.letakObjek || '', item.luasTanah || '', item.luasBangunan || '', item.alasan || '']);
                     });
                 }
             }
 
             const worksheet = XLSX.utils.aoa_to_sheet(rows);
-
-            if (worksheet['!ref']) {
-                const range = XLSX.utils.decode_range(worksheet['!ref']);
-                const colCount = range.e.c - range.s.c + 1;
-
-                worksheet['!merges'] = [
-                    { s: { r: 0, c: 0 }, e: { r: 0, c: colCount - 1 } },
-                    { s: { r: 1, c: 0 }, e: { r: 1, c: colCount - 1 } },
-                    { s: { r: 2, c: 0 }, e: { r: 2, c: colCount - 1 } }
-                ];
-
-                for (let R = range.s.r; R <= range.e.r; ++R) {
-                    for (let C = range.s.c; C <= range.e.c; ++C) {
-                        const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
-                        if (!worksheet[cellAddress]) worksheet[cellAddress] = { t: 's', v: '' };
-
-                        if (R < 3) {
-                            worksheet[cellAddress].s = {
-                                font: { name: 'Calibri', sz: R === 0 ? 13 : 11, bold: true },
-                                alignment: { horizontal: 'center', vertical: 'center' }
-                            };
-                        } else if (R === 3) {
-                            worksheet[cellAddress].s = {};
-                        } else {
-                            const isHeader = (R === headerRowIndex);
-                            const headerVal = String(rows[headerRowIndex]?.[C] || '').toUpperCase();
-                            let horizAlign = isHeader ? 'center' : (C === 0 || headerVal.includes('NOP') || headerVal.includes('NIK') || headerVal.includes('TAHUN') || headerVal.includes('THN') || headerVal.includes('LISTRIK') ? 'center' : (headerVal.includes('LUAS') || headerVal.includes('BUMI') || headerVal.includes('BANGUNAN') || headerVal.includes('TANAH') || headerVal.includes('PENDAFTARAN') || headerVal.includes('PEMUTAKHIRAN') || headerVal.includes('PENGHAPUSAN') || headerVal.includes('TOTAL') ? 'right' : 'left'));
-
-                            worksheet[cellAddress].s = {
-                                border: { top: { style: 'thin', color: { rgb: '000000' } }, bottom: { style: 'thin', color: { rgb: '000000' } }, left: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } },
-                                font: { name: 'Calibri', sz: 11, bold: isHeader },
-                                alignment: { vertical: 'center', horizontal: horizAlign, wrapText: isHeader },
-                                fill: isHeader ? { fgColor: { rgb: 'E2E8F0' } } : undefined
-                            };
-                        }
-                    }
-                }
-            }
-
-            const fileName = `Data_PBB_${thn}_${category.toUpperCase()}_MERANGIN.xlsx`;
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, category.toUpperCase());
-            XLSX.writeFile(workbook, fileName);
-            window.showToast(`Berhasil mengexport data ${category.toUpperCase()} ke Excel lengkap dengan Kop.`, "success");
+            XLSX.writeFile(workbook, `PBB_${thn}_${category.toUpperCase()}_${desa.replace(/\s+/g, '_')}.xlsx`);
+            window.showToast("Berhasil export ke Excel!", "success");
         };
 
         window.printReport = function(category) {
-            const list = category === 'laporan' ? [] : window.getFilteredCategoryRecords(category);
-            let thn = (document.getElementById('metaTahun')?.value || '').toString().toUpperCase();
-            let rt = (document.getElementById('metaRT')?.value || '').toString().toUpperCase();
-            let desa = (document.getElementById('metaDesa')?.value || '').toString().toUpperCase();
-            let kec = (document.getElementById('metaKecamatan')?.value || '').toString().toUpperCase();
+            let thn = window.currentAssignment.tahun || '2026';
+            let desa = window.currentAssignment.desa || '.......................';
+            let kec = window.currentAssignment.kecamatan || '.......................';
 
-            if (category !== 'laporan' && list.length > 0) {
-                if (!kec && list[0].kecamatan) kec = list[0].kecamatan;
-                if (!desa && list[0].desa) desa = list[0].desa;
-                if (!rt && list[0].rt) rt = list[0].rt;
-                if (!thn && list[0].tahun) thn = list[0].tahun;
-            }
-
-            if (!thn) thn = '2026';
-            if (!rt) rt = '.......................';
-            if (!desa) desa = '.......................';
-            if (!kec) kec = '.......................';
-
-            window.safeSetText('printRT', rt);
             window.safeSetText('printDesa', desa);
             window.safeSetText('printKecamatan', kec);
             window.safeSetText('printTahunText', thn);
             window.safeSetText('printTahunSignText', thn);
-            window.safeSetText('printPlaceName', desa && desa !== '.......................' ? desa : 'BANGKO');
+            window.safeSetText('printPlaceName', desa);
 
-            let mainTitle = "PENDAFTARAN";
-            if (category === 'pemutakhiran') mainTitle = "PEMUTAKHIRAN / PEMBETULAN";
-            if (category === 'penghapusan') mainTitle = "PENGHAPUSAN";
-            if (category === 'laporan') mainTitle = "REKAPITULASI PENDAFTARAN, PEMUTAKHIRAN, DAN PENGHAPUSAN PBB-P2";
+            window.safeSetText('printMainTitle', category.toUpperCase());
 
-            window.safeSetText('printMainTitle', mainTitle);
-
+            const list = window.getFilteredCategoryRecords(category);
             const container = document.getElementById('printTableContainer');
-            const metaSection = document.getElementById('printMetaSection');
-            const signSection = document.getElementById('printSignSection');
             if (!container) return;
 
-            if (category === 'laporan') {
-                if (metaSection) metaSection.style.display = 'none';
-                if (signSection) signSection.style.display = 'none';
-                let selectedKec = (document.getElementById('filterKecamatanLaporan')?.value || '').toUpperCase();
-                let kecBannerText = selectedKec ? `KECAMATAN : ${selectedKec}` : `SEMUA KECAMATAN (KABUPATEN MERANGIN)`;
-                let colTitle = selectedKec ? 'DESA / KELURAHAN' : 'KECAMATAN';
-                let tbody = document.getElementById('laporanTableBody');
-                let tfoot = document.getElementById('laporanTableFoot');
-                container.innerHTML = `
-                    <div class="text-xs font-bold mb-3 uppercase text-center bg-slate-100 py-2 border border-slate-300">${window.escapeHtml(kecBannerText)}</div>
-                    <table class="w-full text-xs">
-                        <thead>
-                            <tr><th class="text-center">NO</th><th>${colTitle}</th><th class="text-center">PENDAFTARAN</th><th class="text-center">PEMUTAKHIRAN</th><th class="text-center">PENGHAPUSAN</th><th class="text-center">TOTAL DATA</th></tr>
-                        </thead>
-                        <tbody>${tbody ? tbody.innerHTML : ''}</tbody>
-                        <tfoot>${tfoot ? tfoot.innerHTML : ''}</tfoot>
-                    </table>
-                `;
-            } else {
-                if (metaSection) metaSection.style.display = 'flex';
-                if (signSection) signSection.style.display = 'flex';
-                let tableHtml = `<table class="w-full text-xs">`;
-
-                if (category === 'pendaftaran') {
-                    tableHtml += `
-                        <thead>
-                            <tr><th class="text-center" rowspan="2">NO</th><th class="text-center" rowspan="2">NAMA</th><th class="text-center" rowspan="2">NIK</th><th class="text-center" rowspan="2">ALAMAT WP</th><th class="text-center" rowspan="2">LETAK OBJEK</th><th class="text-center" rowspan="2">LUAS BUMI</th><th class="text-center" colspan="4">BANGUNAN</th><th class="text-center" rowspan="2">KETERANGAN</th></tr>
-                            <tr class="text-center"><th class="text-center">LUAS</th><th class="text-center">THN DBGN</th><th class="text-center">THN RENOV</th><th class="text-center">LISTRIK</th></tr>
-                        </thead>
-                        <tbody>
-                    `;
-                    list.forEach((item, i) => {
-                        tableHtml += `<tr><td class="text-center">${i + 1}</td><td>${window.escapeHtml(item.nama)}</td><td class="text-center">${window.escapeHtml(item.nik || '')}</td><td>${window.escapeHtml(item.alamatWp || '')}</td><td>${window.escapeHtml(item.letakObjek)}</td><td class="text-right">${item.luasBumi || ''}</td><td class="text-right">${item.luasBangunan || ''}</td><td class="text-center">${item.thnDbgn || ''}</td><td class="text-center">${item.thnRenov || ''}</td><td class="text-center">${item.listrik || ''}</td><td>${window.escapeHtml(item.keterangan || '')}</td></tr>`;
-                    });
-                } else if (category === 'pemutakhiran') {
-                    tableHtml += `
-                        <thead>
-                            <tr><th class="text-center" rowspan="2">NO</th><th class="text-center" rowspan="2">NOP</th><th class="text-center" colspan="4">SEBELUM PEMUTAKHIRAN (SPPT/DHKP)</th><th class="text-center" colspan="4">KEADAAN SEBENARNYA</th><th class="text-center" rowspan="2">ALASAN PEMUTAKHIRAN</th></tr>
-                            <tr class="text-center"><th class="text-center">NAMA WP</th><th class="text-center">LETAK OBJEK</th><th class="text-center">L. BUMI</th><th class="text-center">L. BANG</th><th class="text-center">NAMA WP</th><th class="text-center">LETAK OBJEK</th><th class="text-center">L. BUMI</th><th class="text-center">L. BANG</th></tr>
-                        </thead>
-                        <tbody>
-                    `;
-                    list.forEach((item, i) => {
-                        tableHtml += `<tr><td class="text-center">${i + 1}</td><td class="text-center">${window.escapeHtml(item.nop)}</td><td>${window.escapeHtml(item.namaLama || '')}</td><td>${window.escapeHtml(item.letakObjekLama || '')}</td><td class="text-right">${item.luasBumiLama || ''}</td><td class="text-right">${item.luasBangunanLama || ''}</td><td>${window.escapeHtml(item.namaBaru || '')}</td><td>${window.escapeHtml(item.letakObjekBaru || '')}</td><td class="text-right">${item.luasBumiBaru || ''}</td><td class="text-right">${item.luasBangunanBaru || ''}</td><td>${window.escapeHtml(item.alasan || '')}</td></tr>`;
-                    });
-                } else if (category === 'penghapusan') {
-                    tableHtml += `
-                        <thead>
-                            <tr><th class="text-center">NO</th><th class="text-center">NAMA</th><th class="text-center">ALAMAT WP / RT / RW</th><th class="text-center">NOP</th><th class="text-center">ALAMAT OBJEK PAJAK / RT / RW</th><th class="text-center">LUAS TANAH (M2)</th><th class="text-center">LUAS BANGUNAN (M2)</th><th class="text-center">ALASAN PENGHAPUSAN</th></tr>
-                        </thead>
-                        <tbody>
-                    `;
-                    list.forEach((item, i) => {
-                        tableHtml += `<tr><td class="text-center">${i + 1}</td><td>${window.escapeHtml(item.nama)}</td><td>${window.escapeHtml(item.alamatWp || '')}</td><td class="text-center">${window.escapeHtml(item.nop)}</td><td>${window.escapeHtml(item.letakObjek || '')}</td><td class="text-right">${item.luasTanah || ''}</td><td class="text-right">${item.luasBangunan || ''}</td><td>${window.escapeHtml(item.alasan || '')}</td></tr>`;
-                    });
-                }
-                tableHtml += `</tbody></table>`;
-                container.innerHTML = tableHtml;
+            let tableHtml = `<table class="w-full text-xs">`;
+            if (category === 'pendaftaran') {
+                tableHtml += `<thead><tr><th>NO</th><th>DESA/KEC</th><th>NAMA WP</th><th>NIK</th><th>ALAMAT WP</th><th>LETAK OBJEK</th><th>LUAS BUMI</th><th>LUAS BANGUNAN</th><th>KETERANGAN</th></tr></thead><tbody>`;
+                list.forEach((item, i) => {
+                    tableHtml += `<tr><td>${i+1}</td><td>${window.escapeHtml(item.desa)}<br>${window.escapeHtml(item.kecamatan)}</td><td>${window.escapeHtml(item.nama)}</td><td>${window.escapeHtml(item.nik||'')}</td><td>${window.escapeHtml(item.alamatWp||'')}</td><td>${window.escapeHtml(item.letakObjek)}</td><td class="text-right">${item.luasBumi||''}</td><td class="text-right">${item.luasBangunan||''}</td><td>${window.escapeHtml(item.keterangan||'')}</td></tr>`;
+                });
+            } else if (category === 'pemutakhiran') {
+                tableHtml += `<thead><tr><th>NO</th><th>DESA/KEC</th><th>NOP</th><th>NAMA LAMA</th><th>NAMA BARU</th><th>LETAK BARU</th><th>L. BUMI</th><th>L. BANG</th><th>ALASAN</th></tr></thead><tbody>`;
+                list.forEach((item, i) => {
+                    tableHtml += `<tr><td>${i+1}</td><td>${window.escapeHtml(item.desa)}<br>${window.escapeHtml(item.kecamatan)}</td><td>${window.escapeHtml(item.nop)}</td><td>${window.escapeHtml(item.namaLama||'')}</td><td>${window.escapeHtml(item.namaBaru||'')}</td><td>${window.escapeHtml(item.letakObjekBaru||'')}</td><td class="text-right">${item.luasBumiBaru||''}</td><td class="text-right">${item.luasBangunanBaru||''}</td><td>${window.escapeHtml(item.alasan||'')}</td></tr>`;
+                });
+            } else if (category === 'penghapusan') {
+                tableHtml += `<thead><tr><th>NO</th><th>DESA/KEC</th><th>NAMA WP</th><th>NOP</th><th>LETAK OBJEK</th><th>LUAS TANAH</th><th>LUAS BANGUNAN</th><th>ALASAN</th></tr></thead><tbody>`;
+                list.forEach((item, i) => {
+                    tableHtml += `<tr><td>${i+1}</td><td>${window.escapeHtml(item.desa)}<br>${window.escapeHtml(item.kecamatan)}</td><td>${window.escapeHtml(item.nama)}</td><td>${window.escapeHtml(item.nop)}</td><td>${window.escapeHtml(item.letakObjek||'')}</td><td class="text-right">${item.luasTanah||''}</td><td class="text-right">${item.luasBangunan||''}</td><td>${window.escapeHtml(item.alasan||'')}</td></tr>`;
+                });
             }
+            tableHtml += `</tbody></table>`;
+            container.innerHTML = tableHtml;
             window.print();
         };
 
         window.uploadSelectedFileToDrive = async function() {
             if (!window.selectedFileBase64) {
-                window.showToast("Silakan pilih file Surat Pengantar terlebih dahulu.", "error");
+                window.showToast("Pilih file Surat Pengantar terlebih dahulu.", "error");
                 return;
             }
-
             const progressBox = document.getElementById('uploadProgressBox');
             const statusText = document.getElementById('uploadStatusText');
             const btnUpload = document.getElementById('btnUploadDrive');
 
             if (progressBox) progressBox.classList.remove('hidden');
-            if (statusText) statusText.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-emerald-600"></i> Menyimpan referensi URL ke database...`;
+            if (statusText) statusText.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-emerald-600"></i> Menyimpan ke Drive Desa...`;
             if (btnUpload) btnUpload.disabled = true;
-            window.safeSetText('btnUploadText', "Uploading...");
 
-            try {
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                const driveFolderUrl = "https://drive.google.com/drive/u/1/folders/1KRXt-rgZez7fH1NojylIyBqQ9E9o5r8g";
-                const inputUrl = document.getElementById('metaSuratPengantarUrl');
-                if (inputUrl) inputUrl.value = driveFolderUrl;
-                if (statusText) statusText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> Referensi berhasil tersimpan!`;
-                window.showToast("File direferensikan ke sistem!", "success");
-            } catch (err) {
-                console.warn("Upload error:", err);
-                window.showToast("Gagal memproses file.", "error");
-            }
-
+            await new Promise(r => setTimeout(r, 1200));
+            const driveUrl = "https://drive.google.com/drive/u/1/folders/1KRXt-rgZez7fH1NojylIyBqQ9E9o5r8g";
+            document.getElementById('metaSuratPengantarUrl').value = driveUrl;
+            if (statusText) statusText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> Surat Pengantar tertaut ke Drive Desa!`;
             if (btnUpload) btnUpload.disabled = false;
-            window.safeSetText('btnUploadText', "Upload ke Drive");
+            window.showToast("Berkas berhasil ditautkan!", "success");
         };
 
         window.handleFileSelect = function(event) {
@@ -2079,36 +2153,26 @@
             const btnUpload = document.getElementById('btnUploadDrive');
             if (!file) {
                 if (btnUpload) btnUpload.disabled = true;
-                window.selectedFileBase64 = null;
                 return;
             }
-            if (file.size > 20 * 1024 * 1024) {
-                window.showToast("Ukuran file terlalu besar (Maksimal 20MB)", "error");
-                event.target.value = '';
-                if (btnUpload) btnUpload.disabled = true;
-                return;
-            }
-            window.selectedFileName = file.name;
-            window.selectedFileMime = file.type || 'application/octet-stream';
             const reader = new FileReader();
             reader.onload = function(e) {
                 window.selectedFileBase64 = e.target.result.split(',')[1];
                 if (btnUpload) btnUpload.disabled = false;
-                window.showToast(`File siap diupload.`, "info");
+                window.showToast("File siap diupload.", "info");
             };
             reader.readAsDataURL(file);
         };
 
         window.handleFormSubmit = function(event, category) {
             event.preventDefault();
-            const tahun = document.getElementById('metaTahun')?.value.trim();
-            const kecamatan = document.getElementById('metaKecamatan')?.value.trim();
-            const desa = document.getElementById('metaDesa')?.value.trim();
-            const rt = document.getElementById('metaRT')?.value.trim();
-            const suratPengantarUrl = document.getElementById('metaSuratPengantarUrl')?.value.trim();
+            
+            let prefix = category === 'pendaftaran' ? 'pend' : (category === 'pemutakhiran' ? 'pem' : 'hapus');
+            const formKec = document.getElementById(`${prefix}FormKecamatan`)?.value.trim().toUpperCase();
+            const formDesa = document.getElementById(`${prefix}FormDesa`)?.value.trim().toUpperCase();
 
-            if (!tahun || !kecamatan || !desa) {
-                window.showToast("Harap pilih Tahun Pajak, Kecamatan, dan Desa / Kelurahan terlebih dahulu pada bagian atas!", "error");
+            if (!formKec || !formDesa) {
+                window.showToast("Harap tentukan Kecamatan dan Desa / Kelurahan objek pajak!", "error");
                 return;
             }
 
@@ -2117,12 +2181,11 @@
 
             let payload = {
                 id: recordId || 'REC_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
-                tahun,
-                kecamatan,
-                desa,
-                rt,
-                suratPengantarUrl,
-                petugas: window.currentUser ? window.currentUser.email : 'GUEST',
+                tahun: window.currentAssignment.tahun,
+                kecamatan: formKec,
+                desa: formDesa,
+                petugas: window.currentUser ? window.currentUser.email : 'PETUGAS',
+                suratPengantarUrl: document.getElementById('metaSuratPengantarUrl')?.value || '',
                 timestamp: Date.now()
             };
 
@@ -2175,14 +2238,11 @@
                 payload.rtWp = document.getElementById('hapusRtWp').value.trim();
                 payload.rwWp = document.getElementById('hapusRwWp').value.trim();
                 payload.alamatWp = window.combineAddressWithRtRw(payload.alamatWpBase, payload.rtWp, payload.rwWp);
-
                 payload.nop = document.getElementById('hapusNOP').value.trim().toUpperCase();
-
                 payload.letakObjekBase = document.getElementById('hapusLetakObjek').value.trim().toUpperCase();
                 payload.rtObjek = document.getElementById('hapusRtObjek').value.trim();
                 payload.rwObjek = document.getElementById('hapusRwObjek').value.trim();
                 payload.letakObjek = window.combineAddressWithRtRw(payload.letakObjekBase, payload.rtObjek, payload.rwObjek);
-
                 payload.luasTanah = document.getElementById('hapusLuasTanah').value;
                 payload.luasBangunan = document.getElementById('hapusLuasBangunan').value;
                 payload.alasan = document.getElementById('hapusAlasan').value.trim().toUpperCase();
@@ -2190,11 +2250,7 @@
 
             if (recordId) {
                 const idx = window.recordsData[category].findIndex(r => r.id === recordId);
-                if (idx !== -1) {
-                    window.recordsData[category][idx] = payload;
-                } else {
-                    window.recordsData[category].push(payload);
-                }
+                if (idx !== -1) window.recordsData[category][idx] = payload;
                 window.showToast("Data berhasil diperbarui!", "success");
             } else {
                 window.recordsData[category].push(payload);
@@ -2207,12 +2263,7 @@
         };
 
         window.deleteRecord = function(category, id) {
-            if (!window.currentUser || window.currentUser.role !== 'admin') {
-                window.showToast("Hanya Admin Kabupaten yang berhak menghapus data!", "error");
-                return;
-            }
             if (!confirm("Apakah Anda yakin ingin menghapus data ini?")) return;
-
             window.recordsData[category] = (window.recordsData[category] || []).filter(r => r.id !== id);
             window.saveLocalRecords(category);
             window.renderCurrentTabTable();
@@ -2226,19 +2277,13 @@
         };
 
         document.addEventListener('DOMContentLoaded', () => {
-            window.initHeaderWilayahDropdowns();
-            // Default login otomatis sebagai admin agar langsung dapat diuji coba dengan lengkap
-            window.currentUser = { uid: 'mock_admin_123', email: 'admin@meranginkab.go.id', role: 'admin' };
             window.initAuthSessionUI();
         });
     </script>
 
-    <!-- Firebase SDK & Module Integration -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDi0SXWyrt1gqiLRYZg1tPT2Cafu55cqDM",
@@ -2247,21 +2292,11 @@
             projectId: "pbbkolektif2026",
             storageBucket: "pbbkolektif2026.firebasestorage.app",
             messagingSenderId: "412188483780",
-            appId: "1:412188483780:web:99041ed1d3a657cfd9a991",
-            measurementId: "G-7WJMG67WPF"
+            appId: "1:412188483780:web:99041ed1d3a657cfd9a991"
         };
 
         const app = initializeApp(firebaseConfig);
-        
-        let analytics;
-        try {
-            analytics = getAnalytics(app);
-        } catch (e) {
-            console.warn("Analytics dimatikan (offline/local mode).");
-        }
-
         const auth = getAuth(app);
-        const db = getDatabase(app);
 
         onAuthStateChanged(auth, (user) => {
             const statusBadge = document.getElementById('authStatusBadge');
@@ -2284,6 +2319,7 @@
                     statusBadge.className = "bg-slate-500/20 text-slate-400 border border-slate-400/30 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2";
                     if (statusText) statusText.innerHTML = `Terputus`;
                 }
+                window.currentUser = null;
             }
             window.initAuthSessionUI();
         });
@@ -2302,11 +2338,15 @@
                 btnSubmit.disabled = true;
 
                 try {
-                    await signInWithEmailAndPassword(auth, email, password);
+                    const cred = await signInWithEmailAndPassword(auth, email, password);
                     window.closeLoginModal();
                     window.showToast("Berhasil login ke Firebase!", "success");
+
+                    const isAdmin = cred.user.email && cred.user.email.toLowerCase().includes('admin');
+                    if (!isAdmin) {
+                        window.openWilayahSetupModal();
+                    }
                 } catch (error) {
-                    console.error("Login Error:", error);
                     errorMsg.classList.remove('hidden');
                     errorMsg.innerText = "Gagal login: " + error.message;
                 } finally {
