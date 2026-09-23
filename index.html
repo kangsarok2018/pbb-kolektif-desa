@@ -1250,7 +1250,7 @@
 
         window.initFirebaseSync = function() {
             ['pendaftaran', 'pemutakhiran', 'penghapusan'].forEach(cat => {
-                const qRef = collection(db, 'artifacts', appId, 'public', 'data', cat);
+                const qRef = collection(db, 'pbb_2026', cat, 'items');
                 const unsub = onSnapshot(qRef, (snapshot) => {
                     let items = [];
                     snapshot.forEach(docSnap => {
@@ -1964,9 +1964,9 @@
             window.showToast("Data berhasil disimpan!", "success");
             window.resetForm(category);
 
-            // Attempt cloud sync asynchronously
+            // Attempt cloud sync asynchronously using path `pbb_2026/{category}/items/{recordId}`
             try {
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', category, recordId);
+                const docRef = doc(db, 'pbb_2026', category, 'items', recordId);
                 await setDoc(docRef, payload, { merge: true });
             } catch (err) {
                 console.warn("Cloud sync deferred (using local cache):", err.message);
@@ -1982,7 +1982,7 @@
             window.showToast("Data berhasil dihapus.", "success");
 
             try {
-                const docRef = doc(db, 'artifacts', appId, 'public', 'data', category, id);
+                const docRef = doc(db, 'pbb_2026', category, 'items', id);
                 await deleteDoc(docRef);
             } catch(err) {
                 console.warn("Cloud delete deferred:", err.message);
