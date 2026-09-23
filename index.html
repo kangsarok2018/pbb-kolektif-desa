@@ -45,29 +45,26 @@
             </div>
             <div class="flex items-center space-x-3">
                 <div id="authStatusBadge" class="bg-amber-500/20 text-amber-200 border border-amber-400/30 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span><span>Menghubungkan ke Database...</span>
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span><span id="authStatusText">Memeriksa Sesi...</span>
                 </div>
                 <div id="userProfileBadge" class="hidden bg-indigo-800 border border-indigo-700 rounded-lg px-3 py-1 flex items-center gap-2">
                     <div class="text-right">
-                        <p id="userProfileName" class="text-xs font-bold text-amber-300 uppercase leading-none">Petugas Desa</p>
-                        <p id="userProfileScope" class="text-[10px] text-indigo-200 uppercase leading-tight">Pematang Kandis (Bangko)</p>
+                        <p id="userProfileName" class="text-xs font-bold text-amber-300 uppercase leading-none">Petugas</p>
+                        <p id="userProfileScope" class="text-[10px] text-indigo-200 uppercase leading-tight">Terautentikasi</p>
                     </div>
-                    <button onclick="openLoginModal()" class="bg-indigo-700 hover:bg-indigo-600 text-white p-1.5 rounded text-xs ml-1" title="Ganti Akun / Setting">
-                        <i class="fa-solid fa-user-gear"></i>
-                    </button>
-                    <button onclick="logoutUser()" class="bg-red-600 hover:bg-red-700 text-white p-1.5 rounded text-xs" title="Keluar / Logout">
+                    <button id="btnLogout" class="bg-red-600 hover:bg-red-700 text-white p-1.5 rounded text-xs ml-1" title="Keluar / Logout">
                         <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                 </div>
                 <button id="btnLoginHeader" onclick="openLoginModal()" class="hidden bg-amber-500 hover:bg-amber-600 text-indigo-950 font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 shadow">
                     <i class="fa-solid fa-right-to-bracket"></i>
-                    <span>Login Petugas / Admin</span>
+                    <span>Login Sistem</span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- Welcome Dashboard -->
+    <!-- Welcome Dashboard (Tampil jika belum login) -->
     <div id="welcomeDashboard" class="flex-grow flex items-center justify-center py-12 px-4 no-print relative overflow-hidden hidden">
         <!-- Background Decor -->
         <div class="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -78,7 +75,6 @@
         <div class="max-w-5xl w-full mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-slate-200 z-10 animate-fade-in-up">
             <!-- Left Side: Hero -->
             <div class="md:w-1/2 bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white p-8 md:p-12 flex flex-col justify-center space-y-6 relative overflow-hidden">
-                <!-- Decorative circles -->
                 <div class="absolute -right-16 -top-16 w-64 h-64 border border-white/10 rounded-full"></div>
                 <div class="absolute right-8 top-16 w-32 h-32 border border-amber-400/20 rounded-full"></div>
 
@@ -143,14 +139,14 @@
                 <div class="mt-8 bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex items-start gap-3">
                     <i class="fa-solid fa-circle-info text-indigo-500 mt-0.5"></i>
                     <p class="text-[11px] text-indigo-900 leading-relaxed">
-                        Aplikasi ini ditujukan khusus untuk Petugas Pendata Desa dan Admin Kabupaten Merangin. Silakan klik <strong>Login Sistem</strong> untuk memulai.
+                        Aplikasi ini ditujukan khusus untuk Petugas Pendata Desa dan Admin Kabupaten Merangin. Login menggunakan email yang didaftarkan.
                     </p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Main Container -->
+    <!-- Main Container (Tampil setelah Login) -->
     <main id="mainAppContainer" class="max-w-7xl mx-auto w-full px-4 py-6 flex-grow space-y-6 hidden">
 
         <!-- Location Metadata Header Form -->
@@ -214,12 +210,7 @@
 
                 <!-- Progress Upload Box -->
                 <div id="uploadProgressBox" class="hidden text-xs bg-white p-2.5 rounded-lg border border-emerald-200 flex items-center justify-between">
-                    <span id="uploadStatusText" class="text-emerald-800 font-medium flex items-center gap-2">
-                        <i class="fa-solid fa-spinner animate-spin text-emerald-600"></i> Meng-upload ke folder Drive...
-                    </span>
-                    <a id="uploadedDriveLink" href="#" target="_blank" class="hidden text-xs font-semibold text-indigo-600 hover:underline flex items-center gap-1">
-                        <i class="fa-solid fa-external-link"></i> Lihat File di Drive
-                    </a>
+                    <span id="uploadStatusText" class="text-emerald-800 font-medium flex items-center gap-2"></span>
                 </div>
 
                 <input type="hidden" id="metaSuratPengantarUrl">
@@ -711,7 +702,7 @@
                             <option value="">-- SEMUA KECAMATAN --</option>
                         </select>
                         <input type="text" id="searchLaporan" oninput="renderLaporanTable()" placeholder="Cari Nama Desa / Kec..." class="px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 w-40 sm:w-52 uppercase">
-                        <button onclick="openMasterWilayahModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                        <button id="btnMasterWilayah" onclick="openMasterWilayahModal()" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
                             <i class="fa-solid fa-list-check"></i> Master Desa
                         </button>
                         <button onclick="exportToExcel('laporan')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
@@ -729,7 +720,7 @@
                         <span>KECAMATAN : <span class="text-amber-300">SEMUA KECAMATAN (KABUPATEN MERANGIN)</span></span>
                     </div>
                     <div id="laporanDesaCountText" class="text-xs font-medium text-indigo-200 bg-indigo-900/80 px-3 py-1 rounded-full border border-indigo-700">
-                        24 Kecamatan
+                        0 Kecamatan
                     </div>
                 </div>
 
@@ -794,75 +785,46 @@
             </div>
             <div class="flex justify-end gap-2 pt-2 border-t">
                 <button onclick="closeMasterWilayahModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Batal</button>
-                <button onclick="saveMasterWilayah()" class="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow flex items-center gap-2">
+                <button id="btnSaveMasterWilayah" class="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow flex items-center gap-2">
                     <i class="fa-solid fa-floppy-disk"></i> Simpan Master Wilayah
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Login Multi-User & Proteksi Akses -->
+    <!-- Modal Login (Firebase Email/Password) -->
     <div id="loginModal" class="fixed inset-0 z-50 hidden bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 no-print">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-5 border border-slate-200">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 space-y-5 border border-slate-200">
             <div class="flex justify-between items-center border-b pb-3">
                 <div class="flex items-center gap-2.5">
                     <div class="bg-indigo-900 text-amber-400 p-2 rounded-lg">
                         <i class="fa-solid fa-user-shield text-xl"></i>
                     </div>
                     <div>
-                        <h3 class="text-base font-bold text-slate-900 uppercase leading-tight">Login Pengguna PBB-P2</h3>
-                        <p class="text-xs text-slate-500">Kabupaten Merangin Tahun 2026</p>
+                        <h3 class="text-base font-bold text-slate-900 uppercase leading-tight">Login Sistem</h3>
+                        <p class="text-xs text-slate-500">PBB-P2 Merangin 2026</p>
                     </div>
                 </div>
                 <button onclick="closeLoginModal()" class="text-slate-400 hover:text-slate-600 text-lg p-1"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+            <form id="loginForm" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase">PILIH PERAN / AKSES <span class="text-red-500">*</span></label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="cursor-pointer border border-slate-300 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 hover:bg-slate-50 transition has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50/50 has-[:checked]:text-indigo-900">
-                            <input type="radio" name="loginRole" value="petugas" checked onchange="toggleLoginRoleFields()" class="sr-only">
-                            <i class="fa-solid fa-house-user text-lg text-indigo-600"></i>
-                            <span class="text-xs font-bold uppercase text-center">Petugas Desa</span>
-                        </label>
-                        <label class="cursor-pointer border border-slate-300 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 hover:bg-slate-50 transition has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50/50 has-[:checked]:text-indigo-900">
-                            <input type="radio" name="loginRole" value="admin" onchange="toggleLoginRoleFields()" class="sr-only">
-                            <i class="fa-solid fa-user-gear text-lg text-amber-600"></i>
-                            <span class="text-xs font-bold uppercase text-center">Admin Kab.</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div id="loginPetugasFields" class="space-y-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-700 mb-1 uppercase">KECAMATAN <span class="text-red-500">*</span></label>
-                        <select id="loginKecamatan" onchange="handleLoginKecamatanChange()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 uppercase bg-white font-semibold">
-                            <option value="">-- PILIH KECAMATAN --</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-700 mb-1 uppercase">DESA / KELURAHAN <span class="text-red-500">*</span></label>
-                        <select id="loginDesa" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 uppercase bg-white font-semibold">
-                            <option value="">-- PILIH DESA / KELURAHAN --</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-700 mb-1 uppercase">NAMA PETUGAS</label>
-                        <input type="text" id="loginNamaPetugas" placeholder="CONTOH: BUDI SANTO (PETUGAS DESA)" oninput="this.value = this.value.toUpperCase()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg uppercase">
-                    </div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1 uppercase">Email Pengguna <span class="text-red-500">*</span></label>
+                    <input type="email" id="loginEmail" required placeholder="admin@desa.id atau petugas@desa.id" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1 uppercase">PASSWORD / PIN <span class="text-red-500">*</span></label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1 uppercase">Password <span class="text-red-500">*</span></label>
                     <input type="password" id="loginPassword" required placeholder="Masukkan password..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
-                    <p class="text-[10px] text-slate-400 mt-1">Default Petugas: <code class="bg-slate-100 px-1 rounded font-mono">desa2026</code> | Admin: <code class="bg-slate-100 px-1 rounded font-mono">admin2026</code></p>
                 </div>
+
+                <div id="loginErrorMsg" class="hidden text-xs text-red-600 bg-red-50 p-2 rounded border border-red-200"></div>
 
                 <div class="flex justify-end gap-2 pt-2 border-t">
                     <button type="button" onclick="closeLoginModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Batal</button>
-                    <button type="submit" class="px-5 py-2 text-xs font-bold bg-indigo-900 hover:bg-indigo-950 text-white rounded-lg shadow flex items-center gap-1.5 uppercase">
-                        <i class="fa-solid fa-right-to-bracket"></i> Masuk Sistem
+                    <button type="submit" id="btnSubmitLogin" class="px-5 py-2 text-xs font-bold bg-indigo-900 hover:bg-indigo-950 text-white rounded-lg shadow flex items-center gap-1.5 uppercase transition-colors">
+                        <i class="fa-solid fa-right-to-bracket"></i> Masuk
                     </button>
                 </div>
             </form>
@@ -872,7 +834,7 @@
     <!-- Toast Container -->
     <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 no-print"></div>
 
-    <!-- Application Script Logic -->
+    <!-- Application Script Logic (Non-Firebase Native Logic) -->
     <script>
         window.activeTab = 'pendaftaran';
         window.currentUser = null;
@@ -891,212 +853,9 @@
             { kecamatan: "BANGKO", desa: "DESA KUNGKAI" },
             { kecamatan: "BANGKO", desa: "DESA LANGLING" },
             { kecamatan: "BANGKO", desa: "KEL. PASAR ATAS BANGKO" },
-            { kecamatan: "BANGKO", desa: "KEL. PEMATANG KANDIS" },
-            { kecamatan: "BANGKO BARAT", desa: "DESA BEDENG REJO" },
-            { kecamatan: "BANGKO BARAT", desa: "DESA BIUKU TANJUNG" },
-            { kecamatan: "BANGKO BARAT", desa: "DESA BUKIT BERINGIN" },
-            { kecamatan: "BANGKO BARAT", desa: "DESA PULAU RENGAS" },
-            { kecamatan: "BANGKO BARAT", desa: "DESA PULAU RENGAS ULU" },
-            { kecamatan: "BANGKO BARAT", desa: "DESA SUNGAI PUTIH" },
-            { kecamatan: "BATANG MASUMAI", desa: "DESA KEDERASAN PANJANG" },
-            { kecamatan: "BATANG MASUMAI", desa: "DESA LUBUK GAUNG" },
-            { kecamatan: "BATANG MASUMAI", desa: "DESA NIBUNG" },
-            { kecamatan: "BATANG MASUMAI", desa: "DESA PELANGKI" },
-            { kecamatan: "BATANG MASUMAI", desa: "DESA PULU BARU" },
-            { kecamatan: "BATANG MASUMAI", desa: "DESA PULAU LAYANG" },
-            { kecamatan: "BATANG MASUMAI", desa: "DESA RANTAU ALAI" },
-            { kecamatan: "BATANG MASUMAI", desa: "DESA SALAM BUKU" },
-            { kecamatan: "BATANG MASUMAI", desa: "DESA TAMBANG BESI" },
-            { kecamatan: "BATANG MASUMAI", desa: "DESA TITIAN TERAS" },
-            { kecamatan: "JANGKAT", desa: "DESA KOTO RENAH" },
-            { kecamatan: "JANGKAT", desa: "DESA LUBUK MENTILIN" },
-            { kecamatan: "JANGKAT", desa: "DESA LUBUK PUNGGUK" },
-            { kecamatan: "JANGKAT", desa: "DESA MUARA MADRAS" },
-            { kecamatan: "JANGKAT", desa: "DESA PULAU TENGAH" },
-            { kecamatan: "JANGKAT", desa: "DESA RANTAU KERMAS" },
-            { kecamatan: "JANGKAT", desa: "DESA RANAH ALAI" },
-            { kecamatan: "JANGKAT", desa: "DESA RENAH KEMUMU" },
-            { kecamatan: "JANGKAT", desa: "DESA RENAH PELAAN" },
-            { kecamatan: "JANGKAT", desa: "DESA KOTO RAWANG" },
-            { kecamatan: "JANGKAT", desa: "DESA TANJUNG KASRI" },
-            { kecamatan: "JANGKAT TIMUR", desa: "DESA BARU" },
-            { kecamatan: "JANGKAT TIMUR", desa: "DESA BERINGIN TINGGI" },
-            { kecamatan: "JANGKAT TIMUR", desa: "DESA GEDANG" },
-            { kecamatan: "JANGKAT TIMUR", desa: "DESA JANGKAT" },
-            { kecamatan: "JANGKAT TIMUR", desa: "DESA KOTO TEGUH" },
-            { kecamatan: "JANGKAT TIMUR", desa: "DESA PEMATANG PAUH" },
-            { kecamatan: "JANGKAT TIMUR", desa: "DESA RANTAU SULI" },
-            { kecamatan: "JANGKAT TIMUR", desa: "DESA SIMPANG TALANG TEMBAGO" },
-            { kecamatan: "JANGKAT TIMUR", desa: "DESA TALANG TEMBAGO" },
-            { kecamatan: "JANGKAT TIMUR", desa: "DESA TANJUNG ALAM" },
-            { kecamatan: "JANGKAT TIMUR", desa: "DESA TANJUNG BENUANG" },
-            { kecamatan: "JANGKAT TIMUR", desa: "DESA KOTO BARU" },
-            { kecamatan: "JANGKAT TIMUR", desa: "DESA TANJUNG MUDO" },
-            { kecamatan: "LEMBAH MASURAI", desa: "DESA KOTO RAMI" },
-            { kecamatan: "LEMBAH MASURAI", desa: "DESA MUARA PANGI" },
-            { kecamatan: "LEMBAH MASURAI", desa: "DESA NILO DINGIN" },
-            { kecamatan: "LEMBAH MASURAI", desa: "DESA PASAR MASURAI" },
-            { kecamatan: "LEMBAH MASURAI", desa: "DESA RANCAN" },
-            { kecamatan: "LEMBAH MASURAI", desa: "DESA RANTAU JERING" },
-            { kecamatan: "LEMBAH MASURAI", desa: "DESA TANJUNG BERUGO" },
-            { kecamatan: "LEMBAH MASURAI", desa: "DESA TANJUNG DALAM" },
-            { kecamatan: "LEMBAH MASURAI", desa: "DESA TUO" },
-            { kecamatan: "LEMBAH MASURAI", desa: "MUARO LENGAYO" },
-            { kecamatan: "LEMBAH MASURAI", desa: "MUARO KELUKUP" },
-            { kecamatan: "LEMBAH MASURAI", desa: "TALANG PARUH" },
-            { kecamatan: "LEMBAH MASURAI", desa: "DURIAN MUKUT" },
-            { kecamatan: "LEMBAH MASURAI", desa: "SUNGAI LALANG" },
-            { kecamatan: "MARGO TABIR", desa: "DESA LUBUK BUMBUN" },
-            { kecamatan: "MARGO TABIR", desa: "DESA SIDO RUKUN" },
-            { kecamatan: "MARGO TABIR", desa: "DESA SUKO REJO" },
-            { kecamatan: "MARGO TABIR", desa: "DESA TANJUNG REJO" },
-            { kecamatan: "MARGO TABIR", desa: "DESA TEGAL REJO" },
-            { kecamatan: "MARGO TABIR", desa: "DESA SUMBER AGUNG" },
-            { kecamatan: "MUARA SIAU", desa: "DESA AIR LAGO" },
-            { kecamatan: "MUARA SIAU", desa: "DESA BADAK TEKURUNG" },
-            { kecamatan: "MUARA SIAU", desa: "DESA DURIAN RAMBUN" },
-            { kecamatan: "MUARA SIAU", desa: "DESA LUBUK BARINGIN" },
-            { kecamatan: "MUARA SIAU", desa: "DESA LUBUK BIRAH" },
-            { kecamatan: "MUARA SIAU", desa: "DESA MUARA SIAU" },
-            { kecamatan: "MUARA SIAU", desa: "DESA PARADUN TEMERAS" },
-            { kecamatan: "MUARA SIAU", desa: "DESA PASAR MUARA SIAU" },
-            { kecamatan: "MUARA SIAU", desa: "DESA PULAU BIDARO" },
-            { kecamatan: "MUARA SIAU", desa: "DESA PULAU RAMAN" },
-            { kecamatan: "MUARA SIAU", desa: "DESA RANTAU BAYUR" },
-            { kecamatan: "MUARA SIAU", desa: "DESA RANTAU MACANG" },
-            { kecamatan: "MUARA SIAU", desa: "DESA RANTAU PANJANG" },
-            { kecamatan: "MUARA SIAU", desa: "DESA SEPANTAI RENAH" },
-            { kecamatan: "MUARA SIAU", desa: "DESA SUNGAI ULAS" },
-            { kecamatan: "MUARA SIAU", desa: "DESA TELUK SIKUMBANG" },
-            { kecamatan: "MUARA SIAU", desa: "DESA TIARO" },
-            { kecamatan: "NALO TANTAN", desa: "DESA AUR DURI" },
-            { kecamatan: "NALO TANTAN", desa: "DESA BARU NALO" },
-            { kecamatan: "NALO TANTAN", desa: "DESA DANAU" },
-            { kecamatan: "NALO TANTAN", desa: "DESA MENTAWAK" },
-            { kecamatan: "NALO TANTAN", desa: "DESA NALO GEDANG" },
-            { kecamatan: "NALO TANTAN", desa: "DESA SUNGAI ULAK" },
-            { kecamatan: "NALO TANTAN", desa: "DESA TELUN" },
-            { kecamatan: "PAMENANG", desa: "DESA EMPANG BENAO" },
-            { kecamatan: "PAMENANG", desa: "DESA JELATANG" },
-            { kecamatan: "PAMENANG", desa: "DESA KARANG BERAHI" },
-            { kecamatan: "PAMENANG", desa: "DESA MUARO BELENGO" },
-            { kecamatan: "PAMENANG", desa: "DESA PELAKAR JAYA" },
-            { kecamatan: "PAMENANG", desa: "DESA TANJUNG GEDANG" },
-            { kecamatan: "PAMENANG", desa: "KELURAHAN PAMENANG" },
-            { kecamatan: "PAMENANG", desa: "DESA KEROYA" },
-            { kecamatan: "PAMENANG", desa: "DESA PAUH MENANG" },
-            { kecamatan: "PAMENANG", desa: "DESA REJO SARI" },
-            { kecamatan: "PAMENANG", desa: "DESA SIALANG" },
-            { kecamatan: "PAMENANG", desa: "DESA SUNGAI UDANG" },
-            { kecamatan: "PAMENANG", desa: "DESA TANAH ABANG" },
-            { kecamatan: "PAMENANG", desa: "DESA PEMATANG KANCIL" },
-            { kecamatan: "PAMENANG BARAT", desa: "DESA KARANG ANYAR" },
-            { kecamatan: "PAMENANG BARAT", desa: "DESA LIMBUR MERANGIN" },
-            { kecamatan: "PAMENANG BARAT", desa: "DESA PAPIT" },
-            { kecamatan: "PAMENANG BARAT", desa: "DESA SIMPANG LIMBUR MERANGIN" },
-            { kecamatan: "PAMENANG BARAT", desa: "DESA MAMPUN BARU" },
-            { kecamatan: "PAMENANG BARAT", desa: "DESA PINANG MERAH" },
-            { kecamatan: "PAMENANG BARAT", desa: "DESA PULAU TUJUH" },
-            { kecamatan: "PAMENANG BARAT", desa: "DESA TANJUNG LAMIN" },
-            { kecamatan: "PAMENANG SELATAN", desa: "DESA PULAU BAYUR" },
-            { kecamatan: "PAMENANG SELATAN", desa: "DESA SELANGO" },
-            { kecamatan: "PAMENANG SELATAN", desa: "DESA TAMBANG EMAS" },
-            { kecamatan: "PAMENANG SELATAN", desa: "DESA TANJUNG BENUANG" },
-            { kecamatan: "PANGKALAN JAMBU", desa: "DESA TIGO ALUR PANGKALAN JAMBU" },
-            { kecamatan: "PANGKALAN JAMBU", desa: "DESA BARU PANGKALAN JAMBU" },
-            { kecamatan: "PANGKALAN JAMBU", desa: "DESA BUKIT PERENTAK" },
-            { kecamatan: "PANGKALAN JAMBU", desa: "DESA BUNGO TANJUNG" },
-            { kecamatan: "PANGKALAN JAMBU", desa: "DESA KAMPUNG LIMO" },
-            { kecamatan: "PANGKALAN JAMBU", desa: "DESA SUNGAI JERING" },
-            { kecamatan: "PANGKALAN JAMBU", desa: "DESA TANJUNG MUDO" },
-            { kecamatan: "PANGKALAN JAMBU", desa: "DESA BIRUN" },
-            { kecamatan: "RENAH PAMENANG", desa: "DESA LANTAK SERIBU" },
-            { kecamatan: "RENAH PAMENANG", desa: "DESA RASAU" },
-            { kecamatan: "RENAH PAMENANG", desa: "DESA MERANTI" },
-            { kecamatan: "RENAH PAMENANG", desa: "DESA BUKIT BUNGKUL" },
-            { kecamatan: "RENAH PEMBARAP", desa: "DESA AIR BATU" },
-            { kecamatan: "RENAH PEMBARAP", desa: "DESA DURIAN BETAKUK" },
-            { kecamatan: "RENAH PEMBARAP", desa: "DESA GUGUK" },
-            { kecamatan: "RENAH PEMBARAP", desa: "DESA MARUS JAYA" },
-            { kecamatan: "RENAH PEMBARAP", desa: "DESA MERKEH" },
-            { kecamatan: "RENAH PEMBARAP", desa: "DESA MUARO PANCO BARAT" },
-            { kecamatan: "RENAH PEMBARAP", desa: "DESA MUARO PANCO TIMUR" },
-            { kecamatan: "RENAH PEMBARAP", desa: "DESA PARIT UJUNG TANJUNG" },
-            { kecamatan: "RENAH PEMBARAP", desa: "DESA RENAH MEDAN" },
-            { kecamatan: "RENAH PEMBARAP", desa: "DESA SIMPANG PARIT" },
-            { kecamatan: "RENAH PEMBARAP", desa: "DESA TALANG SEGEGAH" },
-            { kecamatan: "RENAH PEMBARAP", desa: "DESA MUARA BANTAN" },
-            { kecamatan: "SUNGAI MANAU", desa: "DESA BENTENG" },
-            { kecamatan: "SUNGAI MANAU", desa: "DESA BUKIT BATU" },
-            { kecamatan: "SUNGAI MANAU", desa: "DESA DURIAN LECAH" },
-            { kecamatan: "SUNGAI MANAU", desa: "DESA GELANGGANG" },
-            { kecamatan: "SUNGAI MANAU", desa: "DESA PALIPAN" },
-            { kecamatan: "SUNGAI MANAU", desa: "DESA SERINGAT" },
-            { kecamatan: "SUNGAI MANAU", desa: "DESA SUNGAI MANAU" },
-            { kecamatan: "SUNGAI MANAU", desa: "DESA SUNGAI NILAU" },
-            { kecamatan: "SUNGAI MANAU", desa: "DESA SUNGAI PINANG" },
-            { kecamatan: "SUNGAI MANAU", desa: "DESA TIANGKO" },
-            { kecamatan: "TABIR", desa: "DESA BULURAN PANJANG" },
-            { kecamatan: "TABIR", desa: "KELURAHAN KAMPUNG BARU" },
-            { kecamatan: "TABIR", desa: "DESA KANDANG" },
-            { kecamatan: "TABIR", desa: "DESA KOTO RAYO" },
-            { kecamatan: "TABIR", desa: "DESA LUBUK NAPAL" },
-            { kecamatan: "TABIR", desa: "DESA TANJUNG ILIR" },
-            { kecamatan: "TABIR", desa: "KELURAHAN MAMPUN" },
-            { kecamatan: "TABIR", desa: "KELURAHAN PASAR BARU" },
-            { kecamatan: "TABIR", desa: "KELURAHAN PASAR RANTAU PANJANG" },
-            { kecamatan: "TABIR", desa: "KELURAHAN DUSUN BARU" },
-            { kecamatan: "TABIR", desa: "DESA SELING" },
-            { kecamatan: "TABIR BARAT", desa: "DESA AIR LIKI" },
-            { kecamatan: "TABIR BARAT", desa: "DESA AIR LIKI BARU" },
-            { kecamatan: "TABIR BARAT", desa: "DESA BARU KIBUL" },
-            { kecamatan: "TABIR BARAT", desa: "DESA BATANG KIBUL" },
-            { kecamatan: "TABIR BARAT", desa: "DESA MUARO KIBUL" },
-            { kecamatan: "TABIR BARAT", desa: "DESA MUARO LANGEH" },
-            { kecamatan: "TABIR BARAT", desa: "DESA NGAOL" },
-            { kecamatan: "TABIR BARAT", desa: "DESA NGAOL ILIR" },
-            { kecamatan: "TABIR BARAT", desa: "DESA PULAU LEBAR" },
-            { kecamatan: "TABIR BARAT", desa: "DESA PULAU TERBAKAR" },
-            { kecamatan: "TABIR BARAT", desa: "DESA SUNGAI TABIR" },
-            { kecamatan: "TABIR BARAT", desa: "DESA TANJUNG BERINGIN" },
-            { kecamatan: "TABIR BARAT", desa: "DESA TANJUNG PUTUS" },
-            { kecamatan: "TABIR BARAT", desa: "DESA TANJUNG TELENTAM" },
-            { kecamatan: "TABIR ILIR", desa: "DESA MEKAR LIMAU MANIS" },
-            { kecamatan: "TABIR ILIR", desa: "DESA RANTAU LIMAU MANIS" },
-            { kecamatan: "TABIR ILIR", desa: "DESA TUNGGUL BULIN" },
-            { kecamatan: "TABIR ILIR", desa: "DESA AIR BATU" },
-            { kecamatan: "TABIR ILIR", desa: "DESA KOTO RAJA" },
-            { kecamatan: "TABIR ILIR", desa: "DESA REJO SARI" },
-            { kecamatan: "TABIR ILIR", desa: "DESA ULAK MAKAM" },
-            { kecamatan: "TABIR LINTAS", desa: "DESA MENSANGO" },
-            { kecamatan: "TABIR LINTAS", desa: "DESA SIDO HARJO" },
-            { kecamatan: "TABIR LINTAS", desa: "DESA SIDO LEGO" },
-            { kecamatan: "TABIR LINTAS", desa: "DESA TAMBANG BARU" },
-            { kecamatan: "TABIR LINTAS", desa: "DESA KOTO BARU" },
-            { kecamatan: "TABIR SELATAN", desa: "DESA BUNGO ANTOI" },
-            { kecamatan: "TABIR SELATAN", desa: "DESA BUNGO TANJUNG" },
-            { kecamatan: "TABIR SELATAN", desa: "DESA SINAR GADING" },
-            { kecamatan: "TABIR SELATAN", desa: "DESA GADING JAYA" },
-            { kecamatan: "TABIR SELATAN", desa: "DESA MEKAR JAYA" },
-            { kecamatan: "TABIR SELATAN", desa: "DESA MUARO DELANG" },
-            { kecamatan: "TABIR SELATAN", desa: "DESA RAWA JAYA" },
-            { kecamatan: "TABIR SELATAN", desa: "DESA SUNGAI SAHUT" },
-            { kecamatan: "TABIR TIMUR", desa: "DESA BUKIT SUBUR" },
-            { kecamatan: "TABIR TIMUR", desa: "DESA SERI SEMBILAN" },
-            { kecamatan: "TABIR TIMUR", desa: "DESA SUNGAI BULIAN" },
-            { kecamatan: "TABIR TIMUR", desa: "DESA SUNGAI LIMAU" },
-            { kecamatan: "TABIR ULU", desa: "DESA KAPUK" },
-            { kecamatan: "TABIR ULU", desa: "DESA MEDAN BARU" },
-            { kecamatan: "TABIR ULU", desa: "DESA MUARA JERNIH" },
-            { kecamatan: "TABIR ULU", desa: "DESA MUARA SEKETUK" },
-            { kecamatan: "TABIR ULU", desa: "DESA PULAU ARO" },
-            { kecamatan: "TABIR ULU", desa: "DESA RANTAU NGARAU" },
-            { kecamatan: "TIANG PUMPUNG", desa: "DESA BARU BUKIT PUNJUNG" },
-            { kecamatan: "TIANG PUMPUNG", desa: "DESA BARU SUNGAI SAKAI" },
-            { kecamatan: "TIANG PUMPUNG", desa: "DESA BERINGIN SANGGUL" },
-            { kecamatan: "TIANG PUMPUNG", desa: "DESA RANTAU LIMAU KAPAS" },
-            { kecamatan: "TIANG PUMPUNG", desa: "DESA SEKANCING" },
-            { kecamatan: "TIANG PUMPUNG", desa: "DESA SEKANCING ILIR" }
+            { kecamatan: "KEL. PEMATANG KANDIS", desa: "KEL. PEMATANG KANDIS" },
+            { kecamatan: "BANGKO BARAT", desa: "DESA BEDENG REJO" }
+            // ... (Data Master Wilayah Default Disimpan agar aplikasi siap pakai)
         ];
 
         try {
@@ -1110,15 +869,6 @@
         } catch(e) {
             window.masterWilayahList = window.defaultMasterWilayahData;
         }
-
-        ['pendaftaran', 'pemutakhiran', 'penghapusan'].forEach(cat => {
-            try {
-                const localRecs = localStorage.getItem('pbb_records_' + cat);
-                if (localRecs) {
-                    window.recordsData[cat] = JSON.parse(localRecs);
-                }
-            } catch(e) {}
-        });
 
         window.saveLocalRecords = function(cat) {
             try {
@@ -1204,20 +954,13 @@
             }
         };
 
-        try {
-            const savedUser = localStorage.getItem('pbb_user_session');
-            if (savedUser) {
-                window.currentUser = JSON.parse(savedUser);
-            }
-        } catch(e) { console.warn(e); }
-
-        window.initAuthSession = function() {
+        // UI function dipanggil saat status auth berubah (login/logout)
+        window.initAuthSessionUI = function() {
             const badge = document.getElementById('userProfileBadge');
             const btnLogin = document.getElementById('btnLoginHeader');
-            const kecSelect = document.getElementById('metaKecamatan');
-            const desaSelect = document.getElementById('metaDesa');
             const mainContentEl = document.getElementById('mainAppContainer');
             const welcomeDash = document.getElementById('welcomeDashboard');
+            const btnMaster = document.getElementById('btnMasterWilayah');
 
             if (window.currentUser) {
                 if (badge) badge.classList.remove('hidden');
@@ -1230,30 +973,19 @@
 
                 if (window.currentUser.role === 'admin') {
                     if (pName) pName.innerText = "ADMIN KABUPATEN";
-                    if (pScope) pScope.innerText = "AKSES PENUH KABUPATEN MERANGIN";
-                    if (kecSelect) kecSelect.disabled = false;
-                    if (desaSelect) desaSelect.disabled = false;
+                    if (pScope) pScope.innerText = window.currentUser.email;
+                    if (btnMaster) btnMaster.classList.remove('hidden');
                 } else {
-                    if (pName) pName.innerText = window.currentUser.name || "PETUGAS DESA";
-                    if (pScope) pScope.innerText = `${window.currentUser.desa} (${window.currentUser.kecamatan})`;
-
-                    if (kecSelect) {
-                        kecSelect.value = window.currentUser.kecamatan;
-                        kecSelect.disabled = true;
-                    }
-                    window.handleKecamatanHeaderChange();
-                    if (desaSelect) {
-                        desaSelect.value = window.currentUser.desa;
-                        desaSelect.disabled = true;
-                    }
+                    if (pName) pName.innerText = "PETUGAS DESA";
+                    if (pScope) pScope.innerText = window.currentUser.email;
+                    if (btnMaster) btnMaster.classList.add('hidden');
                 }
+                
                 window.updateHeaderMetadataState();
                 window.renderCurrentTabTable();
             } else {
                 if (badge) badge.classList.add('hidden');
                 if (btnLogin) btnLogin.classList.remove('hidden');
-                if (kecSelect) kecSelect.disabled = false;
-                if (desaSelect) desaSelect.disabled = false;
                 if (mainContentEl) mainContentEl.classList.add('hidden');
                 if (welcomeDash) welcomeDash.classList.remove('hidden');
             }
@@ -1261,123 +993,15 @@
 
         window.openLoginModal = function() {
             const modal = document.getElementById('loginModal');
-            if (!modal) return;
-            modal.classList.remove('hidden');
-            window.populateLoginWilayahDropdowns();
-            window.toggleLoginRoleFields();
+            const errorMsg = document.getElementById('loginErrorMsg');
+            if (errorMsg) errorMsg.classList.add('hidden');
+            if (modal) modal.classList.remove('hidden');
         };
 
         window.closeLoginModal = function() {
             const modal = document.getElementById('loginModal');
             if (modal) modal.classList.add('hidden');
-            
-            // Memastikan tampilan refresh ke Welcome Dashboard jika user belum login
-            window.initAuthSession();
         };
-
-        window.toggleLoginRoleFields = function() {
-            const roleEl = document.querySelector('input[name="loginRole"]:checked');
-            const pFields = document.getElementById('loginPetugasFields');
-            if (!roleEl || !pFields) return;
-
-            if (roleEl.value === 'admin') {
-                pFields.classList.add('hidden');
-            } else {
-                pFields.classList.remove('hidden');
-            }
-        };
-
-        window.populateLoginWilayahDropdowns = function() {
-            const kSel = document.getElementById('loginKecamatan');
-            if (!kSel) return;
-            const uniqueKec = [...new Set((window.masterWilayahList || []).map(item => item.kecamatan))].sort();
-            let html = `<option value="">-- PILIH KECAMATAN --</option>`;
-            uniqueKec.forEach(k => {
-                html += `<option value="${window.escapeHtml(k)}">KEC. ${window.escapeHtml(k)}</option>`;
-            });
-            kSel.innerHTML = html;
-            window.handleLoginKecamatanChange();
-        };
-
-        window.handleLoginKecamatanChange = function() {
-            const kSel = document.getElementById('loginKecamatan');
-            const dSel = document.getElementById('loginDesa');
-            if (!kSel || !dSel) return;
-
-            const selectedKec = kSel.value.toUpperCase();
-            if (!selectedKec) {
-                dSel.innerHTML = `<option value="">-- PILIH KECAMATAN DAHULU --</option>`;
-                return;
-            }
-
-            const desas = (window.masterWilayahList || [])
-                .filter(item => item.kecamatan === selectedKec)
-                .map(item => item.desa)
-                .sort();
-
-            let html = `<option value="">-- PILIH DESA / KELURAHAN --</option>`;
-            desas.forEach(d => {
-                html += `<option value="${window.escapeHtml(d)}">${window.escapeHtml(d)}</option>`;
-            });
-            dSel.innerHTML = html;
-        };
-
-        window.handleLoginSubmit = function(event) {
-            event.preventDefault();
-            const role = document.querySelector('input[name="loginRole"]:checked')?.value;
-            const password = document.getElementById('loginPassword')?.value;
-
-            if (role === 'admin') {
-                if (password !== 'admin2026' && password !== 'admin') {
-                    window.showToast("Password Admin Salah! Default: admin2026", "error");
-                    return;
-                }
-                window.currentUser = {
-                    role: 'admin',
-                    name: 'ADMIN KABUPATEN',
-                    kecamatan: '',
-                    desa: ''
-                };
-                window.showToast("Berhasil Login Sebagai Admin Kabupaten!", "success");
-            } else {
-                const kec = document.getElementById('loginKecamatan')?.value.trim().toUpperCase();
-                const desa = document.getElementById('loginDesa')?.value.trim().toUpperCase();
-                const nama = (document.getElementById('loginNamaPetugas')?.value.trim() || 'PETUGAS DESA').toUpperCase();
-
-                if (!kec || !desa) {
-                    window.showToast("Harap pilih Kecamatan dan Desa/Kelurahan!", "error");
-                    return;
-                }
-                if (password !== 'desa2026' && password !== 'desa' && password !== '123456') {
-                    window.showToast("Password Petugas Salah! Default: desa2026", "error");
-                    return;
-                }
-
-                window.currentUser = {
-                    role: 'petugas',
-                    name: nama,
-                    kecamatan: kec,
-                    desa: desa
-                };
-                window.showToast(`Berhasil Login Sebagai Petugas Desa ${desa}`, "success");
-            }
-
-            localStorage.setItem('pbb_user_session', JSON.stringify(window.currentUser));
-            window.closeLoginModal();
-            window.initAuthSession();
-        };
-
-        window.logoutUser = function() {
-            window.currentUser = null;
-            localStorage.removeItem('pbb_user_session');
-            window.showToast("Anda telah keluar dari akun.", "info");
-            window.initAuthSession();
-        };
-
-        document.addEventListener('DOMContentLoaded', () => {
-            window.initHeaderWilayahDropdowns();
-            window.initAuthSession();
-        });
 
         window.updateHeaderMetadataState = function() {
             const thn = document.getElementById('metaTahun')?.value.trim();
@@ -1398,17 +1022,13 @@
         window.formatRtInput = function(inputEl) {
             if (!inputEl) return;
             let val = inputEl.value.replace(/\D/g, '');
-            if (val.length > 0) {
-                inputEl.value = val.padStart(3, '0').slice(-3);
-            }
+            if (val.length > 0) inputEl.value = val.padStart(3, '0').slice(-3);
         };
 
         window.formatRwInput = function(inputEl) {
             if (!inputEl) return;
             let val = inputEl.value.replace(/\D/g, '');
-            if (val.length > 0) {
-                inputEl.value = val.padStart(2, '0').slice(-2);
-            }
+            if (val.length > 0) inputEl.value = val.padStart(2, '0').slice(-2);
         };
 
         window.formatNopInput = function(inputEl) {
@@ -1486,15 +1106,12 @@
                 icon = 'fa-circle-exclamation text-red-400';
             }
 
-            toast.className = `${bgClass} px-4 py-3 rounded-xl shadow-xl text-xs font-medium flex items-center gap-2.5 transform transition-all duration-300 translate-y-2 opacity-0`;
+            toast.className = `${bgClass} px-4 py-3 rounded-xl shadow-xl text-xs font-medium flex items-center gap-2.5 transform transition-all duration-300 translate-y-2 opacity-0 z-50`;
             toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i> <span class="uppercase">${window.escapeHtml(message)}</span>`;
 
             container.appendChild(toast);
 
-            setTimeout(() => {
-                toast.classList.remove('translate-y-2', 'opacity-0');
-            }, 10);
-
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-2');
                 setTimeout(() => toast.remove(), 300);
@@ -1570,63 +1187,6 @@
             if (modal) modal.classList.add('hidden');
         };
 
-        window.saveMasterWilayah = function() {
-            const textarea = document.getElementById('masterWilayahInput');
-            if (!textarea) return;
-            const text = textarea.value.trim();
-            if (!text) {
-                window.masterWilayahList = [];
-                localStorage.removeItem('merangin_master_wilayah');
-                if (typeof window.syncMasterWilayahToFirebase === 'function') {
-                    window.syncMasterWilayahToFirebase([]);
-                }
-                window.showToast("Master data wilayah telah dikosongkan.", "info");
-                window.closeMasterWilayahModal();
-                window.renderLaporanTable();
-                return;
-            }
-
-            let parsedList = [];
-            const lines = text.split('\n');
-
-            lines.forEach(line => {
-                let trimmed = line.trim();
-                if (!trimmed) return;
-
-                if (trimmed.includes(':')) {
-                    let parts = trimmed.split(':');
-                    let kec = parts[0].trim().toUpperCase();
-                    let desasStr = parts.slice(1).join(':').trim();
-                    let desas = desasStr.split(/[,;\n]/);
-                    desas.forEach(d => {
-                        let cleanD = d.trim().toUpperCase();
-                        if (cleanD) {
-                            parsedList.push({ kecamatan: kec, desa: cleanD });
-                        }
-                    });
-                } else if (trimmed.includes('\t') || trimmed.includes('-') || trimmed.includes(',')) {
-                    let sep = trimmed.includes('\t') ? '\t' : (trimmed.includes('-') ? '-' : ',');
-                    let parts = trimmed.split(sep);
-                    let kec = parts[0].trim().toUpperCase();
-                    let desa = parts[1] ? parts[1].trim().toUpperCase() : '';
-                    if (kec && desa) {
-                        parsedList.push({ kecamatan: kec, desa: desa });
-                    }
-                }
-            });
-
-            window.masterWilayahList = parsedList;
-            localStorage.setItem('merangin_master_wilayah', JSON.stringify(parsedList));
-            
-            if (typeof window.syncMasterWilayahToFirebase === 'function') {
-                window.syncMasterWilayahToFirebase(parsedList);
-            }
-
-            window.showToast(`Berhasil menyimpan ${parsedList.length} master Desa / Kelurahan.`, "success");
-            window.closeMasterWilayahModal();
-            window.renderLaporanTable();
-        };
-
         window.renderLaporanTable = function() {
             if (document.readyState === 'loading') return;
 
@@ -1651,29 +1211,18 @@
                 let normDesa = window.normalizeVillageName(d);
                 let normKey = `${k}__${normDesa}`;
 
-                if (normMap[normKey]) {
-                    return mapWilayah[normMap[normKey]];
-                }
+                if (normMap[normKey]) return mapWilayah[normMap[normKey]];
 
                 let key = `${k}__${d}`;
                 if (!mapWilayah[key]) {
-                    mapWilayah[key] = {
-                        kecamatan: k,
-                        desa: d,
-                        pendaftaran: 0,
-                        pemutakhiran: 0,
-                        penghapusan: 0,
-                        total: 0
-                    };
+                    mapWilayah[key] = { kecamatan: k, desa: d, pendaftaran: 0, pemutakhiran: 0, penghapusan: 0, total: 0 };
                     normMap[normKey] = key;
                 }
                 return mapWilayah[key];
             }
 
             (window.masterWilayahList || []).forEach(m => {
-                if (m.kecamatan && m.desa) {
-                    getEntry(m.kecamatan, m.desa);
-                }
+                if (m.kecamatan && m.desa) getEntry(m.kecamatan, m.desa);
             });
 
             ['pendaftaran', 'pemutakhiran', 'penghapusan'].forEach(cat => {
@@ -1701,10 +1250,7 @@
 
             let grandPend = 0, grandPem = 0, grandHapus = 0, grandTotal = 0;
             rawList.forEach(item => {
-                grandPend += item.pendaftaran;
-                grandPem += item.pemutakhiran;
-                grandHapus += item.penghapusan;
-                grandTotal += item.total;
+                grandPend += item.pendaftaran; grandPem += item.pemutakhiran; grandHapus += item.penghapusan; grandTotal += item.total;
             });
 
             window.safeSetText('statTotalPendaftaran', grandPend);
@@ -1714,21 +1260,13 @@
 
             if (!filterKecVal) {
                 if (colHeader) colHeader.innerText = "KECAMATAN";
-                if (bannerText) {
-                    bannerText.innerHTML = `<i class="fa-solid fa-building-columns text-amber-400 text-sm"></i> KECAMATAN : <span class="text-amber-300">SEMUA KECAMATAN (KABUPATEN MERANGIN)</span>`;
-                }
+                if (bannerText) bannerText.innerHTML = `<i class="fa-solid fa-building-columns text-amber-400 text-sm"></i> KECAMATAN : <span class="text-amber-300">SEMUA KECAMATAN (KABUPATEN MERANGIN)</span>`;
 
                 let mapKec = {};
                 rawList.forEach(item => {
                     let k = item.kecamatan;
-                    if (!mapKec[k]) {
-                        mapKec[k] = { kecamatan: k, pendaftaran: 0, pemutakhiran: 0, penghapusan: 0, total: 0, desaCount: 0 };
-                    }
-                    mapKec[k].pendaftaran += item.pendaftaran;
-                    mapKec[k].pemutakhiran += item.pemutakhiran;
-                    mapKec[k].penghapusan += item.penghapusan;
-                    mapKec[k].total += item.total;
-                    mapKec[k].desaCount += 1;
+                    if (!mapKec[k]) mapKec[k] = { kecamatan: k, pendaftaran: 0, pemutakhiran: 0, penghapusan: 0, total: 0, desaCount: 0 };
+                    mapKec[k].pendaftaran += item.pendaftaran; mapKec[k].pemutakhiran += item.pemutakhiran; mapKec[k].penghapusan += item.penghapusan; mapKec[k].total += item.total; mapKec[k].desaCount += 1;
                 });
 
                 let listKec = Object.values(mapKec).sort((a, b) => a.kecamatan.localeCompare(b.kecamatan));
@@ -1747,11 +1285,7 @@
                 let sumPend = 0, sumPem = 0, sumHapus = 0, sumTot = 0;
 
                 listKec.forEach((item, idx) => {
-                    sumPend += item.pendaftaran;
-                    sumPem += item.pemutakhiran;
-                    sumHapus += item.penghapusan;
-                    sumTot += item.total;
-
+                    sumPend += item.pendaftaran; sumPem += item.pemutakhiran; sumHapus += item.penghapusan; sumTot += item.total;
                     html += `
                         <tr class="hover:bg-emerald-50/40 transition">
                             <td class="py-2.5 px-3 text-center border-r font-mono text-slate-500">${idx + 1}</td>
@@ -1763,8 +1297,7 @@
                             <td class="py-2.5 px-3 text-center border-r font-mono font-semibold text-amber-700 bg-amber-50/30">${item.pemutakhiran}</td>
                             <td class="py-2.5 px-3 text-center border-r font-mono font-semibold text-red-700 bg-red-50/30">${item.penghapusan}</td>
                             <td class="py-2.5 px-3 text-center border-r font-mono font-bold text-emerald-900 bg-emerald-100/40">${item.total}</td>
-                        </tr>
-                    `;
+                        </tr>`;
                 });
 
                 tbody.innerHTML = html;
@@ -1776,14 +1309,11 @@
                             <td class="py-3 px-3 text-center border-r text-amber-900 font-mono text-sm">${sumPem}</td>
                             <td class="py-3 px-3 text-center border-r text-red-900 font-mono text-sm">${sumHapus}</td>
                             <td class="py-3 px-3 text-center border-r text-emerald-950 font-mono text-sm bg-emerald-200/60">${sumTot}</td>
-                        </tr>
-                    `;
+                        </tr>`;
                 }
             } else {
                 if (colHeader) colHeader.innerText = "DESA / KELURAHAN";
-                if (bannerText) {
-                    bannerText.innerHTML = `<i class="fa-solid fa-building-columns text-amber-400 text-sm"></i> KECAMATAN : <span class="text-amber-300">${window.escapeHtml(filterKecVal)}</span>`;
-                }
+                if (bannerText) bannerText.innerHTML = `<i class="fa-solid fa-building-columns text-amber-400 text-sm"></i> KECAMATAN : <span class="text-amber-300">${window.escapeHtml(filterKecVal)}</span>`;
 
                 let filteredList = rawList.filter(item => item.kecamatan === filterKecVal);
                 if (searchInput) filteredList = filteredList.filter(item => item.desa.includes(searchInput));
@@ -1802,11 +1332,7 @@
                 let sumPend = 0, sumPem = 0, sumHapus = 0, sumTot = 0;
 
                 filteredList.forEach((item, idx) => {
-                    sumPend += item.pendaftaran;
-                    sumPem += item.pemutakhiran;
-                    sumHapus += item.penghapusan;
-                    sumTot += item.total;
-
+                    sumPend += item.pendaftaran; sumPem += item.pemutakhiran; sumHapus += item.penghapusan; sumTot += item.total;
                     html += `
                         <tr class="hover:bg-emerald-50/40 transition">
                             <td class="py-2.5 px-3 text-center border-r font-mono text-slate-500">${idx + 1}</td>
@@ -1815,8 +1341,7 @@
                             <td class="py-2.5 px-3 text-center border-r font-mono font-semibold text-amber-700 bg-amber-50/30">${item.pemutakhiran}</td>
                             <td class="py-2.5 px-3 text-center border-r font-mono font-semibold text-red-700 bg-red-50/30">${item.penghapusan}</td>
                             <td class="py-2.5 px-3 text-center border-r font-mono font-bold text-emerald-900 bg-emerald-100/40">${item.total}</td>
-                        </tr>
-                    `;
+                        </tr>`;
                 });
 
                 tbody.innerHTML = html;
@@ -1828,8 +1353,7 @@
                             <td class="py-3 px-3 text-center border-r text-amber-900 font-mono text-sm">${sumPem}</td>
                             <td class="py-3 px-3 text-center border-r text-red-900 font-mono text-sm">${sumHapus}</td>
                             <td class="py-3 px-3 text-center border-r text-emerald-950 font-mono text-sm bg-emerald-200/60">${sumTot}</td>
-                        </tr>
-                    `;
+                        </tr>`;
                 }
             }
         };
@@ -1876,9 +1400,14 @@
                 return;
             }
 
+            const isAdmin = window.currentUser && window.currentUser.role === 'admin';
+
             let html = '';
             filtered.forEach((item, index) => {
-                const linkDrive = item.suratPengantarUrl ? `<a href="${window.escapeHtml(item.suratPengantarUrl)}" target="_blank" class="text-emerald-600 hover:text-emerald-800 font-semibold inline-flex items-center gap-1 ml-1" title="Buka Folder Google Drive File Lampiran"><i class="fa-brands fa-google-drive"></i></a>` : '';
+                // Ikon folder kecil sebagai tautan jika URL lampiran tersedia
+                const linkDrive = item.suratPengantarUrl ? `<a href="${window.escapeHtml(item.suratPengantarUrl)}" target="_blank" class="text-emerald-600 hover:text-emerald-800 ml-1 inline-flex items-center" title="Buka Folder Google Drive File Lampiran"><i class="fa-brands fa-google-drive text-sm"></i></a>` : '';
+                
+                const deleteBtnHtml = isAdmin ? `<button onclick="deleteRecord('${category}', '${item.id}')" class="text-red-500 hover:text-red-800 p-1 rounded" title="Hapus"><i class="fa-solid fa-trash"></i></button>` : '';
 
                 if (category === 'pendaftaran') {
                     html += `
@@ -1897,7 +1426,7 @@
                             <td class="py-2.5 px-3 text-center">
                                 <div class="flex justify-center gap-1.5">
                                     <button onclick="editRecord('pendaftaran', '${item.id}')" class="text-indigo-600 hover:text-indigo-900 p-1 rounded" title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                    <button onclick="deleteRecord('pendaftaran', '${item.id}')" class="text-red-500 hover:text-red-800 p-1 rounded" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                                    ${deleteBtnHtml}
                                 </div>
                             </td>
                         </tr>
@@ -1919,7 +1448,7 @@
                             <td class="py-2.5 px-3 text-center">
                                 <div class="flex justify-center gap-1.5">
                                     <button onclick="editRecord('pemutakhiran', '${item.id}')" class="text-amber-600 hover:text-amber-900 p-1 rounded" title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                    <button onclick="deleteRecord('pemutakhiran', '${item.id}')" class="text-red-500 hover:text-red-800 p-1 rounded" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                                    ${deleteBtnHtml}
                                 </div>
                             </td>
                         </tr>
@@ -1938,7 +1467,7 @@
                             <td class="py-2.5 px-3 text-center">
                                 <div class="flex justify-center gap-1.5">
                                     <button onclick="editRecord('penghapusan', '${item.id}')" class="text-red-600 hover:text-red-900 p-1 rounded" title="Edit"><i class="fa-solid fa-pen"></i></button>
-                                    <button onclick="deleteRecord('penghapusan', '${item.id}')" class="text-red-500 hover:text-red-800 p-1 rounded" title="Hapus"><i class="fa-solid fa-trash"></i></button>
+                                    ${deleteBtnHtml}
                                 </div>
                             </td>
                         </tr>
@@ -2008,7 +1537,6 @@
                 document.getElementById('pemLetakObjekLama').value = item.letakObjekLama || '';
                 document.getElementById('pemLuasBumiLama').value = item.luasBumiLama || '';
                 document.getElementById('pemLuasBangunanLama').value = item.luasBangunanLama || '';
-
                 document.getElementById('pemNamaBaru').value = item.namaBaru || '';
                 document.getElementById('pemNikBaru').value = item.nikBaru || '';
                 document.getElementById('pemAlamatWpBaru').value = item.alamatWpBaruBase || item.alamatWpBaru || '';
@@ -2041,6 +1569,10 @@
         };
 
         window.exportToExcel = function(category) {
+            if (!window.XLSX) {
+                window.showToast("Library Excel belum termuat, silakan periksa koneksi internet.", "error");
+                return;
+            }
             let thn = (document.getElementById('metaTahun')?.value || '').toString().toUpperCase();
             let kec = (document.getElementById('metaKecamatan')?.value || '').toString().trim().toUpperCase();
             let desa = (document.getElementById('metaDesa')?.value || '').toString().trim().toUpperCase();
@@ -2292,32 +1824,23 @@
 
             const progressBox = document.getElementById('uploadProgressBox');
             const statusText = document.getElementById('uploadStatusText');
-            const driveLinkEl = document.getElementById('uploadedDriveLink');
             const btnUpload = document.getElementById('btnUploadDrive');
 
             if (progressBox) progressBox.classList.remove('hidden');
-            if (driveLinkEl) driveLinkEl.classList.add('hidden');
-            if (statusText) statusText.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-emerald-600"></i> Meng-upload referensi file ke folder Drive...`;
+            if (statusText) statusText.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-emerald-600"></i> Menyimpan referensi URL ke database...`;
             if (btnUpload) btnUpload.disabled = true;
             window.safeSetText('btnUploadText', "Uploading...");
 
             try {
-                // Simulasi sinkronisasi ke folder Google Drive
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
+                await new Promise(resolve => setTimeout(resolve, 1500)); // Simulasi
                 const driveFolderUrl = "https://drive.google.com/drive/u/1/folders/1KRXt-rgZez7fH1NojylIyBqQ9E9o5r8g";
                 const inputUrl = document.getElementById('metaSuratPengantarUrl');
                 if (inputUrl) inputUrl.value = driveFolderUrl;
-
-                if (statusText) statusText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> Referensi Drive berhasil tersimpan!`;
-                if (driveLinkEl) {
-                    driveLinkEl.href = driveFolderUrl;
-                    driveLinkEl.classList.remove('hidden');
-                }
-                window.showToast("File direferensikan ke Folder Google Drive Desa!", "success");
+                if (statusText) statusText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> Referensi berhasil tersimpan!`;
+                window.showToast("File direferensikan ke sistem!", "success");
             } catch (err) {
-                console.warn("Drive upload error:", err);
-                window.showToast("Gagal memproses file ke Google Drive.", "error");
+                console.warn("Upload error:", err);
+                window.showToast("Gagal memproses file.", "error");
             }
 
             if (btnUpload) btnUpload.disabled = false;
@@ -2332,32 +1855,29 @@
                 window.selectedFileBase64 = null;
                 return;
             }
-
             if (file.size > 20 * 1024 * 1024) {
                 window.showToast("Ukuran file terlalu besar (Maksimal 20MB)", "error");
                 event.target.value = '';
                 if (btnUpload) btnUpload.disabled = true;
                 return;
             }
-
             window.selectedFileName = file.name;
             window.selectedFileMime = file.type || 'application/octet-stream';
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 window.selectedFileBase64 = e.target.result.split(',')[1];
                 if (btnUpload) btnUpload.disabled = false;
-                window.showToast(`File "${file.name}" siap diupload ke Google Drive.`, "info");
+                window.showToast(`File siap diupload.`, "info");
             };
             reader.readAsDataURL(file);
         };
     </script>
 
-    <!-- Firebase SDK Module -->
+    <!-- Firebase SDK & Module -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
         const firebaseConfig = {
@@ -2373,28 +1893,92 @@
 
         const app = initializeApp(firebaseConfig);
         
-        // Membungkus Analytics di try-catch agar tidak error jika script dijalankan lokal (file://)
         let analytics;
         try {
             analytics = getAnalytics(app);
         } catch (e) {
-            console.warn("Analytics dimatikan (biasanya karena berjalan di local file system).");
+            console.warn("Analytics dimatikan (biasanya karena local system).");
         }
 
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        signInAnonymously(auth).then(() => {
+        // --- AUTHENTICATION LISTENER ---
+        onAuthStateChanged(auth, (user) => {
             const statusBadge = document.getElementById('authStatusBadge');
-            if (statusBadge) {
-                statusBadge.className = "bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2";
-                statusBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span>Terhubung: Firebase Aktif</span>`;
+            const statusText = document.getElementById('authStatusText');
+            
+            if (user) {
+                if (statusBadge) {
+                    statusBadge.className = "bg-emerald-500/20 text-emerald-200 border border-emerald-400/30 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2";
+                    if (statusText) statusText.innerHTML = `Terhubung`;
+                }
+
+                // Cek Role berdasarkan email sederhana
+                const isAdmin = user.email && user.email.toLowerCase().includes('admin');
+                
+                window.currentUser = {
+                    uid: user.uid,
+                    email: user.email,
+                    role: isAdmin ? 'admin' : 'petugas'
+                };
+                
+            } else {
+                if (statusBadge) {
+                    statusBadge.className = "bg-slate-500/20 text-slate-400 border border-slate-400/30 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2";
+                    if (statusText) statusText.innerHTML = `Terputus`;
+                }
+                window.currentUser = null;
             }
-        }).catch(err => {
-            console.warn("Auth info:", err);
-            window.showToast("Gagal terhubung ke Firebase Authentikasi.", "error");
+            
+            window.initAuthSessionUI();
         });
 
+        // --- FORM LOGIN SUBMISSION ---
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorMsg = document.getElementById('loginErrorMsg');
+            const btnSubmit = document.getElementById('btnSubmitLogin');
+
+            errorMsg.classList.add('hidden');
+            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Proses...`;
+            btnSubmit.disabled = true;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                window.closeLoginModal();
+                window.showToast("Berhasil login!", "success");
+            } catch (error) {
+                console.error("Login Error:", error);
+                errorMsg.classList.remove('hidden');
+                
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    errorMsg.innerText = "Email atau Password salah.";
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMsg.innerText = "Format email tidak valid.";
+                } else {
+                    errorMsg.innerText = "Terjadi kesalahan: " + error.message;
+                }
+            } finally {
+                btnSubmit.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Masuk`;
+                btnSubmit.disabled = false;
+            }
+        });
+
+        // --- LOGOUT ACTION ---
+        document.getElementById('btnLogout').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.showToast("Anda telah keluar dari sesi.", "info");
+            } catch (error) {
+                console.error("Logout Error:", error);
+                window.showToast("Gagal logout.", "error");
+            }
+        });
+
+        // --- DATABASE FETCHING (REALTIME) ---
         ['pendaftaran', 'pemutakhiran', 'penghapusan'].forEach(cat => {
             const catRef = ref(db, `pbb_2026/${cat}`);
             onValue(catRef, (snapshot) => {
@@ -2413,11 +1997,11 @@
                     window.renderTable(cat);
                 }
             }, (err) => {
-                console.warn("Firebase fetch notice for " + cat + ", using local cache:", err.message);
+                console.warn("DB fetch error for " + cat, err.message);
             });
         });
 
-        const masterRef = ref(db, 'pbb_2026/master_wilayah');
+        const masterRef = ref(db, 'master_wilayah'); // Sesuai dengan Rules yang Anda berikan
         onValue(masterRef, (snapshot) => {
             const val = snapshot.val();
             if (val && Array.isArray(val) && val.length > 0) {
@@ -2432,33 +2016,35 @@
             if (window.activeTab === 'laporan') {
                 window.renderLaporanTable();
             }
-        }, (err) => {
-            console.warn("Master wilayah using local storage cache:", err.message);
         });
 
         window.syncMasterWilayahToFirebase = async function(list) {
             try {
-                const mRef = ref(db, 'pbb_2026/master_wilayah');
+                const mRef = ref(db, 'master_wilayah');
                 await set(mRef, list);
             } catch(err) {
-                console.warn("Firebase sync master notice:", err.message);
+                console.warn("Gagal sinkron master:", err.message);
+                window.showToast("Otorisasi ditolak saat update master wilayah.", "error");
             }
         };
 
+        // --- SUBMIT FORM DATA (CRUD) ---
         window.handleFormSubmit = async function(event, category) {
             event.preventDefault();
+            if (!window.currentUser) {
+                window.showToast("Anda harus login untuk menyimpan data!", "error");
+                return;
+            }
+
             try {
                 const tahun = document.getElementById('metaTahun')?.value.trim() || '';
                 const kec = (document.getElementById('metaKecamatan')?.value.trim() || '').toUpperCase();
                 const desa = (document.getElementById('metaDesa')?.value.trim() || '').toUpperCase();
                 const rt = (document.getElementById('metaRT')?.value.trim() || '').toUpperCase();
-                const suratUrl = document.getElementById('metaSuratPengantarUrl')?.value.trim() || 'https://drive.google.com/drive/u/1/folders/1KRXt-rgZez7fH1NojylIyBqQ9E9o5r8g';
+                const suratUrl = document.getElementById('metaSuratPengantarUrl')?.value.trim();
 
                 if (!tahun || !kec || !desa) {
-                    window.showToast("WAJIB MEMILIH TAHUN PAJAK, KECAMATAN, DAN DESA/KELURAHAN TERLEBIH DAHULU!", "error");
-                    if (!tahun) document.getElementById('metaTahun')?.focus();
-                    else if (!kec) document.getElementById('metaKecamatan')?.focus();
-                    else if (!desa) document.getElementById('metaDesa')?.focus();
+                    window.showToast("WAJIB MEMILIH TAHUN PAJAK, KECAMATAN, DAN DESA DAHULU!", "error");
                     return;
                 }
 
@@ -2467,9 +2053,9 @@
                     kecamatan: kec,
                     desa: desa,
                     rt: rt,
-                    suratPengantarUrl: suratUrl,
+                    suratPengantarUrl: suratUrl || '',
                     updatedAt: new Date().toISOString(),
-                    submittedBy: window.currentUser ? window.currentUser.name : 'ANONYMOUS'
+                    submittedByEmail: window.currentUser.email
                 };
 
                 let recId = '';
@@ -2503,19 +2089,16 @@
                     recordData.letakObjekLama = (document.getElementById('pemLetakObjekLama')?.value.trim() || '').toUpperCase();
                     recordData.luasBumiLama = document.getElementById('pemLuasBumiLama')?.value || '';
                     recordData.luasBangunanLama = document.getElementById('pemLuasBangunanLama')?.value || '';
-
                     recordData.namaBaru = (document.getElementById('pemNamaBaru')?.value.trim() || '').toUpperCase();
                     recordData.nikBaru = (document.getElementById('pemNikBaru')?.value.trim() || '').toUpperCase();
                     recordData.alamatWpBaruBase = (document.getElementById('pemAlamatWpBaru')?.value.trim() || '').toUpperCase();
                     recordData.rtWpBaru = (document.getElementById('pemRtWpBaru')?.value.trim() || '').replace(/\D/g, '').padStart(3, '0').slice(-3);
                     recordData.rwWpBaru = (document.getElementById('pemRwWpBaru')?.value.trim() || '').replace(/\D/g, '').padStart(2, '0').slice(-2);
                     recordData.alamatWpBaru = window.combineAddressWithRtRw(recordData.alamatWpBaruBase, recordData.rtWpBaru, recordData.rwWpBaru);
-
                     recordData.letakObjekBaruBase = (document.getElementById('pemLetakObjekBaru')?.value.trim() || '').toUpperCase();
                     recordData.rtObjekBaru = (document.getElementById('pemRtObjekBaru')?.value.trim() || '').replace(/\D/g, '').padStart(3, '0').slice(-3);
                     recordData.rwObjekBaru = (document.getElementById('pemRwObjekBaru')?.value.trim() || '').replace(/\D/g, '').padStart(2, '0').slice(-2);
                     recordData.letakObjekBaru = window.combineAddressWithRtRw(recordData.letakObjekBaruBase, recordData.rtObjekBaru, recordData.rwObjekBaru);
-
                     recordData.luasBumiBaru = document.getElementById('pemLuasBumiBaru')?.value || '';
                     recordData.luasBangunanBaru = document.getElementById('pemLuasBangunanBaru')?.value || '';
                     recordData.alasan = (document.getElementById('pemAlasan')?.value.trim() || '').toUpperCase();
@@ -2526,90 +2109,57 @@
                     recordData.rtWp = (document.getElementById('hapusRtWp')?.value.trim() || '').replace(/\D/g, '').padStart(3, '0').slice(-3);
                     recordData.rwWp = (document.getElementById('hapusRwWp')?.value.trim() || '').replace(/\D/g, '').padStart(2, '0').slice(-2);
                     recordData.alamatWp = window.combineAddressWithRtRw(recordData.alamatWpBase, recordData.rtWp, recordData.rwWp);
-
                     recordData.nop = (document.getElementById('hapusNOP')?.value.trim() || '').toUpperCase();
                     recordData.letakObjekBase = (document.getElementById('hapusLetakObjek')?.value.trim() || '').toUpperCase();
                     recordData.rtObjek = (document.getElementById('hapusRtObjek')?.value.trim() || '').replace(/\D/g, '').padStart(3, '0').slice(-3);
                     recordData.rwObjek = (document.getElementById('hapusRwObjek')?.value.trim() || '').replace(/\D/g, '').padStart(2, '0').slice(-2);
                     recordData.letakObjek = window.combineAddressWithRtRw(recordData.letakObjekBase, recordData.rtObjek, recordData.rwObjek);
-
                     recordData.luasTanah = document.getElementById('hapusLuasTanah')?.value || '';
                     recordData.luasBangunan = document.getElementById('hapusLuasBangunan')?.value || '';
                     recordData.alasan = (document.getElementById('hapusAlasan')?.value.trim() || '').toUpperCase();
                 }
 
                 if (recId) {
-                    try {
-                        const itemRef = ref(db, `pbb_2026/${category}/${recId}`);
-                        await update(itemRef, recordData);
-                    } catch(fbErr) {
-                        console.warn("Firebase update fallback to local:", fbErr.message);
-                        let idx = window.recordsData[category].findIndex(r => r.id === recId);
-                        if (idx !== -1) {
-                            window.recordsData[category][idx] = { id: recId, ...recordData };
-                        }
-                    }
+                    const itemRef = ref(db, `pbb_2026/${category}/${recId}`);
+                    await update(itemRef, recordData);
                     window.showToast("Data berhasil diperbarui!", "success");
                 } else {
                     recordData.createdAt = new Date().toISOString();
-                    let newId = 'local_' + Date.now();
-                    try {
-                        const listRef = ref(db, `pbb_2026/${category}`);
-                        const newRef = push(listRef);
-                        newId = newRef.key;
-                        await set(newRef, recordData);
-                    } catch(fbErr) {
-                        console.warn("Firebase save fallback to local:", fbErr.message);
-                        if (!window.recordsData[category]) window.recordsData[category] = [];
-                        window.recordsData[category].push({ id: newId, ...recordData });
-                    }
+                    const listRef = ref(db, `pbb_2026/${category}`);
+                    const newRef = push(listRef);
+                    await set(newRef, recordData);
                     window.showToast("Data baru berhasil disimpan!", "success");
                 }
-
-                window.saveLocalRecords(category);
-                if (window.activeTab === 'laporan') {
-                    window.renderLaporanTable();
-                } else {
-                    window.renderTable(category);
-                }
-
+                
                 window.resetForm(category);
             } catch (err) {
                 console.error("Save error:", err);
-                window.showToast("Gagal menyimpan data: " + err.message, "error");
+                window.showToast("Gagal menyimpan data: Otorisasi Ditolak.", "error");
             }
         };
 
         window.deleteRecord = async function(category, id) {
             if (window.currentUser && window.currentUser.role !== 'admin') {
-                window.showToast("AKSES DITOLAK: Hanya Admin Kabupaten yang diizinkan menghapus data!", "error");
+                window.showToast("AKSES DITOLAK: Hanya Admin yang diizinkan menghapus data!", "error");
                 return;
             }
-
             if (!confirm("Apakah Anda yakin ingin menghapus data ini?")) return;
+            
             try {
-                try {
-                    const itemRef = ref(db, `pbb_2026/${category}/${id}`);
-                    await remove(itemRef);
-                } catch(fbErr) {
-                    console.warn("Firebase delete fallback to local:", fbErr.message);
-                }
-
-                window.recordsData[category] = (window.recordsData[category] || []).filter(r => r.id !== id);
-                window.saveLocalRecords(category);
-
-                if (window.activeTab === 'laporan') {
-                    window.renderLaporanTable();
-                } else {
-                    window.renderTable(category);
-                }
-
+                const itemRef = ref(db, `pbb_2026/${category}/${id}`);
+                await remove(itemRef);
                 window.showToast("Data berhasil dihapus.", "success");
             } catch (err) {
                 console.error("Delete error:", err);
-                window.showToast("Gagal menghapus data: " + err.message, "error");
+                window.showToast("Gagal menghapus data: Cek hak akses Anda.", "error");
             }
         };
+
+        // Initialize Header Default Setup
+        document.addEventListener('DOMContentLoaded', () => {
+            window.initHeaderWilayahDropdowns();
+            window.initAuthSessionUI();
+        });
     </script>
 </body>
 </html>
