@@ -805,7 +805,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getDatabase, ref, set, get, remove, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'merangin-pbb-2026';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
@@ -820,11 +820,10 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
-        const db = getFirestore(app);
+        const db = getDatabase(app);
 
         window.activeTab = 'pendaftaran';
         window.currentUser = null;
-        window.unsubscribeListeners = [];
 
         window.recordsData = {
             pendaftaran: [],
@@ -1199,71 +1198,20 @@
             window.renderCurrentTabTable();
         };
 
-        // Local storage fallback for robust offline/permission error handling
-        window.saveLocalRecord = function(category, item) {
-            let key = `local_pbb_${appId}_${category}`;
-            let data = [];
-            try {
-                let existing = localStorage.getItem(key);
-                if (existing) data = JSON.parse(existing);
-            } catch(e) {}
-            
-            let idx = data.findIndex(r => r.id === item.id);
-            if (idx >= 0) {
-                data[idx] = item;
-            } else {
-                data.push(item);
-            }
-            localStorage.setItem(key, JSON.stringify(data));
-        };
-
-        window.deleteLocalRecord = function(category, id) {
-            let key = `local_pbb_${appId}_${category}`;
-            try {
-                let existing = localStorage.getItem(key);
-                if (existing) {
-                    let data = JSON.parse(existing);
-                    data = data.filter(r => r.id !== id);
-                    localStorage.setItem(key, JSON.stringify(data));
-                }
-            } catch(e) {}
-        };
-
-        window.getLocalRecords = function(category) {
-            let key = `local_pbb_${appId}_${category}`;
-            try {
-                let existing = localStorage.getItem(key);
-                if (existing) return JSON.parse(existing);
-            } catch(e) {}
-            return [];
-        };
-
-        window.mergeRecords = function(category, cloudList) {
-            let localList = window.getLocalRecords(category);
-            let map = {};
-            cloudList.forEach(r => map[r.id] = r);
-            localList.forEach(r => {
-                if (!map[r.id]) map[r.id] = r;
-            });
-            return Object.values(map);
-        };
-
         window.initFirebaseSync = function() {
             ['pendaftaran', 'pemutakhiran', 'penghapusan'].forEach(cat => {
-                const qRef = collection(db, 'pbb_2026', cat, 'items');
-                const unsub = onSnapshot(qRef, (snapshot) => {
+                const dbRef = ref(db, `pbb_2026/${cat}`);
+                onValue(dbRef, (snapshot) => {
+                    const dataObj = snapshot.val() || {};
                     let items = [];
-                    snapshot.forEach(docSnap => {
-                        items.push({ id: docSnap.id, ...docSnap.data() });
+                    Object.keys(dataObj).forEach(key => {
+                        items.push({ id: key, ...dataObj[key] });
                     });
-                    window.recordsData[cat] = window.mergeRecords(cat, items);
+                    window.recordsData[cat] = items;
                     window.renderCurrentTabTable();
                 }, (error) => {
-                    console.warn("Firestore listener warning or permission restricted, using local storage fallback.", error);
-                    window.recordsData[cat] = window.getLocalRecords(cat);
-                    window.renderCurrentTabTable();
+                    console.warn("Realtime Database read warning:", error);
                 });
-                window.unsubscribeListeners.push(unsub);
             });
         };
 
@@ -1957,35 +1905,27 @@
                 payload.alasan = document.getElementById('hapusAlasan').value.trim().toUpperCase();
             }
 
-            // Always update local cache instantly for responsive UI
-            window.saveLocalRecord(category, payload);
-            window.recordsData[category] = window.getLocalRecords(category);
-            window.renderCurrentTabTable();
-            window.showToast("Data berhasil disimpan!", "success");
-            window.resetForm(category);
-
-            // Attempt cloud sync asynchronously using path `pbb_2026/{category}/items/{recordId}`
             try {
-                const docRef = doc(db, 'pbb_2026', category, 'items', recordId);
-                await setDoc(docRef, payload, { merge: true });
+                const itemRef = ref(db, `pbb_2026/${category}/${recordId}`);
+                await set(itemRef, payload);
+                window.showToast("Data berhasil disimpan ke Realtime Database!", "success");
+                window.resetForm(category);
             } catch (err) {
-                console.warn("Cloud sync deferred (using local cache):", err.message);
+                console.error("Gagal menyimpan ke Firebase Realtime Database:", err);
+                window.showToast("Gagal menyimpan ke Firebase: " + err.message, "error");
             }
         };
 
         window.deleteRecord = async function(category, id) {
             if (!confirm("Apakah Anda yakin ingin menghapus data ini?")) return;
             
-            window.deleteLocalRecord(category, id);
-            window.recordsData[category] = window.getLocalRecords(category);
-            window.renderCurrentTabTable();
-            window.showToast("Data berhasil dihapus.", "success");
-
             try {
-                const docRef = doc(db, 'pbb_2026', category, 'items', id);
-                await deleteDoc(docRef);
+                const itemRef = ref(db, `pbb_2026/${category}/${id}`);
+                await remove(itemRef);
+                window.showToast("Data berhasil dihapus.", "success");
             } catch(err) {
-                console.warn("Cloud delete deferred:", err.message);
+                console.error("Gagal menghapus dari Firebase Realtime Database:", err);
+                window.showToast("Gagal menghapus data: " + err.message, "error");
             }
         };
 
@@ -2146,7 +2086,6 @@
             window.showToast("Anda telah keluar dari sistem.", "info");
         };
 
-        // Initialize Firebase Authentication listener
         onAuthStateChanged(auth, async (user) => {
             const statusBadge = document.getElementById('authStatusBadge');
             const statusText = document.getElementById('authStatusText');
@@ -2173,7 +2112,6 @@
             window.initAuthSessionUI();
         });
 
-        // Anonymous or custom token sign in fallback
         const initAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
         if (initAuthToken) {
             signInWithCustomToken(auth, initAuthToken).catch(() => signInAnonymously(auth));
