@@ -1153,18 +1153,14 @@
                 return;
             }
 
-            if (window.currentUser) {
-                const savedWilayah = localStorage.getItem('petugas_wilayah_' + window.currentUser.uid);
-                if (savedWilayah) {
-                    try {
-                        const parsed = JSON.parse(savedWilayah);
-                        document.getElementById('setupTahun').value = parsed.tahun || '2026';
-                        document.getElementById('setupKecamatan').value = parsed.kecamatan || '';
-                        window.handleSetupKecamatanChange();
-                        document.getElementById('setupDesa').value = parsed.desa || '';
-                    } catch(e) {}
-                }
-            }
+            // Always reset the setup form dropdowns to default unselected state when modal opens
+            const setupKec = document.getElementById('setupKecamatan');
+            const setupDesa = document.getElementById('setupDesa');
+            const setupThn = document.getElementById('setupTahun');
+            if (setupThn) setupThn.value = '2026';
+            if (setupKec) setupKec.value = '';
+            if (setupDesa) setupDesa.innerHTML = `<option value="">-- PILIH KECAMATAN DAHULU --</option>`;
+
             modal.classList.remove('hidden');
         };
 
@@ -2082,6 +2078,15 @@
                 await signOut(auth);
             } catch(e) {}
             window.currentUser = null;
+            
+            // Clear login form fields upon logout
+            const loginEmailInput = document.getElementById('loginEmail');
+            const loginPasswordInput = document.getElementById('loginPassword');
+            const loginErrorDiv = document.getElementById('loginErrorMsg');
+            if (loginEmailInput) loginEmailInput.value = '';
+            if (loginPasswordInput) loginPasswordInput.value = '';
+            if (loginErrorDiv) loginErrorDiv.classList.add('hidden');
+
             window.initAuthSessionUI();
             window.showToast("Anda telah keluar dari sistem.", "info");
         };
