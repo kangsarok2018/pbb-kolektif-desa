@@ -38,7 +38,7 @@
     <div id="welcomeDashboard" class="fixed inset-0 z-50 bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-900 flex items-center justify-center p-4">
         <div class="bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl max-w-lg w-full p-8 space-y-6 text-center border border-indigo-100">
             <div class="w-20 h-20 bg-indigo-900 text-amber-400 mx-auto rounded-2xl flex items-center justify-center shadow-lg overflow-hidden border-2 border-amber-400/30">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Coat_of_arms_of_Merangin_Regency.png" alt="Lambang Kabupaten Merangin" class="w-14 h-14 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/60x60/312e81/facc15?text=MERANGIN'">
+                <img src="https://lh3.googleusercontent.com/d/1_7FZisvkbSmNCadKTjaRVrFQpgPoIgNF" alt="Lambang Kabupaten Merangin" class="w-14 h-14 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/60x60/312e81/facc15?text=MERANGIN'">
             </div>
             <div class="space-y-2">
                 <h1 class="text-xl font-extrabold text-indigo-950 uppercase tracking-wide">PENDATAAN OBJEK & SUBJEK PBB - P2</h1>
@@ -60,7 +60,7 @@
         <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center space-x-3">
                 <div class="bg-indigo-800 p-1.5 rounded-xl shadow-inner border border-indigo-700 flex items-center justify-center w-11 h-11">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Coat_of_arms_of_Merangin_Regency.png" alt="Lambang Kabupaten Merangin" class="w-9 h-9 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/40x40/312e81/facc15?text=M'">
+                    <img src="https://lh3.googleusercontent.com/d/1_7FZisvkbSmNCadKTjaRVrFQpgPoIgNF" alt="Lambang Kabupaten Merangin" class="w-9 h-9 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/40x40/312e81/facc15?text=M'">
                 </div>
                 <div>
                     <h1 class="font-bold text-lg tracking-wide leading-tight uppercase">PENDATAAN OBJEK & SUBJEK PBB - P2</h1>
@@ -738,7 +738,7 @@
             <div class="flex justify-between items-center border-b pb-3">
                 <div class="flex items-center gap-2.5">
                     <div class="bg-indigo-900 text-amber-400 p-2 rounded-lg flex items-center justify-center w-10 h-10 overflow-hidden border border-amber-400/30">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Coat_of_arms_of_Merangin_Regency.png" alt="Logo Merangin" class="w-8 h-8 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/40x40/312e81/facc15?text=M'">
+                        <img src="https://lh3.googleusercontent.com/d/1_7FZisvkbSmNCadKTjaRVrFQpgPoIgNF" alt="Logo Merangin" class="w-8 h-8 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/40x40/312e81/facc15?text=M'">
                     </div>
                     <div>
                         <h3 class="text-base font-bold text-slate-900 uppercase leading-tight">Login Pengguna PBB-P2</h3>
@@ -1166,6 +1166,10 @@
                         desaSelect.disabled = true;
                     }
                 }
+                
+                // Selalu set tab aktif kembali ke pendaftaran setiap kali login berhasil
+                window.switchTab('pendaftaran');
+
                 window.updateHeaderMetadataState();
                 window.renderCurrentTabTable();
             } else {
