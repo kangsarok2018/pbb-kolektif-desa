@@ -169,7 +169,7 @@
                 <i class="fa-solid fa-file-circle-xmark text-red-600 text-sm"></i>
                 <span>3. PENGHAPUSAN</span>
             </button>
-            <button id="tabBtnLaporan" onclick="switchTab('laporan')" class="flex-1 py-2.5 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-white/50">
+            <button id="tabBtnLaporan" onclick="switchTab('laporan')" class="hidden flex-1 py-2.5 px-4 rounded-lg transition-all flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 hover:bg-white/50">
                 <i class="fa-solid fa-chart-column text-emerald-600 text-sm"></i>
                 <span>4. REKAP LAPORAN</span>
             </button>
@@ -1132,6 +1132,7 @@
             const welcomeDash = document.getElementById('welcomeDashboard');
             const kecSelect = document.getElementById('metaKecamatan');
             const desaSelect = document.getElementById('metaDesa');
+            const tabBtnLaporan = document.getElementById('tabBtnLaporan');
 
             if (window.currentUser) {
                 if (welcomeDash) welcomeDash.classList.add('hidden');
@@ -1152,6 +1153,7 @@
                         desaSelect.value = "";
                         desaSelect.disabled = false;
                     }
+                    if (tabBtnLaporan) tabBtnLaporan.classList.remove('hidden');
                 } else {
                     if (pName) pName.innerText = window.currentUser.name || "PETUGAS DESA";
                     if (pScope) pScope.innerText = `${window.currentUser.desa} (${window.currentUser.kecamatan})`;
@@ -1165,6 +1167,7 @@
                         desaSelect.value = window.currentUser.desa;
                         desaSelect.disabled = true;
                     }
+                    if (tabBtnLaporan) tabBtnLaporan.classList.add('hidden');
                 }
                 
                 // Selalu set tab aktif kembali ke pendaftaran setiap kali login berhasil
@@ -1177,6 +1180,7 @@
                 if (badge) badge.classList.add('hidden');
                 if (kecSelect) kecSelect.disabled = false;
                 if (desaSelect) desaSelect.disabled = false;
+                if (tabBtnLaporan) tabBtnLaporan.classList.add('hidden');
             }
         };
 
