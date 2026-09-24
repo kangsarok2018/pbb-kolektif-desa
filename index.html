@@ -26,7 +26,7 @@
             body { background: white; color: black; font-size: 11px; }
             table { border-collapse: collapse; width: 100%; }
             th, td { border: 1px solid #000 !important; padding: 4px 6px !important; text-align: center; vertical-align: middle; }
-            th { text-align: center !important; vertical-align: middle !important; }
+            th { text-align: center !important; vertical-align: middle !important; background-color: #f3f4f6 !important; -webkit-print-color-adjust: exact; }
             .print-header { margin-bottom: 15px; }
         }
         .print-only { display: none; }
@@ -733,7 +733,7 @@
     </div>
 
     <!-- Login Modal -->
-    <div id="loginModal" class="fixed inset-0 z-50 hidden bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 no-print">
+    <div id="loginModal" class="fixed inset-0 z-[100] hidden bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 no-print">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-5 border border-slate-200">
             <div class="flex justify-between items-center border-b pb-3">
                 <div class="flex items-center gap-2.5">
@@ -801,7 +801,7 @@
     </div>
 
     <!-- Toast Container -->
-    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 no-print"></div>
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-[9999] flex flex-col gap-2 no-print pointer-events-none"></div>
 
     <script>
         window.activeTab = 'pendaftaran';
@@ -1225,8 +1225,9 @@
 
         window.logoutUser = async function() {
             try {
-                const { signOut } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
-                await signOut(window.authInstance);
+                if (window.triggerFirebaseSignOut) {
+                    await window.triggerFirebaseSignOut();
+                }
             } catch(e) {
                 console.warn(e);
             }
@@ -1355,7 +1356,7 @@
                 icon = 'fa-circle-exclamation text-red-400';
             }
 
-            toast.className = `${bgClass} px-4 py-3 rounded-xl shadow-xl text-xs font-medium flex items-center gap-2.5 transform transition-all duration-300 translate-y-2 opacity-0`;
+            toast.className = `${bgClass} px-4 py-3 rounded-xl shadow-xl text-xs font-medium flex items-center gap-2.5 transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto`;
             toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i> <span class="uppercase">${window.escapeHtml(message)}</span>`;
 
             container.appendChild(toast);
@@ -2197,12 +2198,12 @@
                     <table class="w-full text-xs">
                         <thead>
                             <tr>
-                                <th class="text-center align-middle">NO</th>
-                                <th class="text-center align-middle">${colTitle}</th>
-                                <th class="text-center align-middle">PENDAFTARAN</th>
-                                <th class="text-center align-middle">PEMUTAKHIRAN</th>
-                                <th class="text-center align-middle">PENGHAPUSAN</th>
-                                <th class="text-center align-middle">TOTAL DATA</th>
+                                <th class="text-center align-middle border border-slate-300">NO</th>
+                                <th class="text-center align-middle border border-slate-300">${colTitle}</th>
+                                <th class="text-center align-middle border border-slate-300">PENDAFTARAN</th>
+                                <th class="text-center align-middle border border-slate-300">PEMUTAKHIRAN</th>
+                                <th class="text-center align-middle border border-slate-300">PENGHAPUSAN</th>
+                                <th class="text-center align-middle border border-slate-300">TOTAL DATA</th>
                             </tr>
                         </thead>
                         <tbody>${tbody ? tbody.innerHTML : ''}</tbody>
@@ -2213,215 +2214,129 @@
             } else {
                 if (metaSection) metaSection.style.display = 'flex';
                 if (signSection) signSection.style.display = 'flex';
-                let tableHtml = `<table class="w-full text-xs">`;
 
+                let thData = ''; let tbData = '';
                 if (category === 'pendaftaran') {
-                    tableHtml += `
-                        <thead>
-                            <tr>
-                                <th class="text-center align-middle" rowspan="2">NO</th>
-                                <th class="text-center align-middle" rowspan="2">NAMA</th>
-                                <th class="text-center align-middle" rowspan="2">NIK</th>
-                                <th class="text-center align-middle" rowspan="2">ALAMAT WP</th>
-                                <th class="text-center align-middle" rowspan="2">LETAK OBJEK</th>
-                                <th class="text-center align-middle" rowspan="2">LUAS BUMI</th>
-                                <th class="text-center align-middle" colspan="4">BANGUNAN</th>
-                                <th class="text-center align-middle" rowspan="2">KETERANGAN</th>
-                            </tr>
-                            <tr class="text-center">
-                                <th class="text-center align-middle">LUAS</th>
-                                <th class="text-center align-middle">THN DBGN</th>
-                                <th class="text-center align-middle">THN RENOV</th>
-                                <th class="text-center align-middle">LISTRIK</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                    `;
-                    list.forEach((item, i) => {
-                        tableHtml += `
-                            <tr>
-                                <td class="text-center align-middle">${i + 1}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.nama)}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.nik || '')}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.alamatWp || '')}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.letakObjek)}</td>
-                                <td class="text-right align-middle">${item.luasBumi ? item.luasBumi + ' m²' : ''}</td>
-                                <td class="text-right align-middle">${item.luasBangunan ? item.luasBangunan + ' m²' : ''}</td>
-                                <td class="text-center align-middle">${item.thnDbgn || ''}</td>
-                                <td class="text-center align-middle">${item.thnRenov || ''}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.listrik || '')}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.keterangan || '')}</td>
-                            </tr>
-                        `;
+                    thData = `<tr><th rowspan="2" class="border border-slate-300">NO</th><th rowspan="2" class="border border-slate-300">NAMA WP</th><th rowspan="2" class="border border-slate-300">NIK</th><th rowspan="2" class="border border-slate-300">ALAMAT WP</th><th rowspan="2" class="border border-slate-300">LETAK OBJEK</th><th colspan="2" class="border border-slate-300">LUAS (m²)</th><th rowspan="2" class="border border-slate-300">KETERANGAN</th></tr><tr><th class="border border-slate-300">BUMI</th><th class="border border-slate-300">BANGUNAN</th></tr>`;
+                    list.forEach((i, x) => {
+                        tbData += `<tr><td align="center" class="border border-slate-300 py-1">${x + 1}</td><td class="border border-slate-300 px-1">${window.escapeHtml(i.nama)}</td><td align="center" class="border border-slate-300 px-1">${i.nik || '-'}</td><td class="border border-slate-300 px-1">${window.escapeHtml(i.alamatWp)}</td><td class="border border-slate-300 px-1">${window.escapeHtml(i.letakObjek)}</td><td align="right" class="border border-slate-300 px-1">${i.luasBumi || '-'}</td><td align="right" class="border border-slate-300 px-1">${i.luasBangunan || '-'}</td><td class="border border-slate-300 px-1 text-[10px]">${window.escapeHtml(i.keterangan)}</td></tr>`;
                     });
                 } else if (category === 'pemutakhiran') {
-                    tableHtml += `
-                        <thead>
-                            <tr>
-                                <th class="text-center align-middle" rowspan="2">NO</th>
-                                <th class="text-center align-middle" rowspan="2">NOP</th>
-                                <th class="text-center align-middle" colspan="4">SEBELUM PEMUTAKHIRAN (SPPT/DHKP)</th>
-                                <th class="text-center align-middle" colspan="4">KEADAAN SEBENARNYA</th>
-                                <th class="text-center align-middle" rowspan="2">ALASAN PEMUTAKHIRAN</th>
-                            </tr>
-                            <tr class="text-center">
-                                <th class="text-center align-middle">NAMA WP</th>
-                                <th class="text-center align-middle">LETAK OBJEK</th>
-                                <th class="text-center align-middle">L. BUMI</th>
-                                <th class="text-center align-middle">L. BANG</th>
-                                <th class="text-center align-middle">NAMA WP</th>
-                                <th class="text-center align-middle">LETAK OBJEK</th>
-                                <th class="text-center align-middle">L. BUMI</th>
-                                <th class="text-center align-middle">L. BANG</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                    `;
-                    list.forEach((item, i) => {
-                        tableHtml += `
-                            <tr>
-                                <td class="text-center align-middle">${i + 1}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.nop)}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.namaLama || '')}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.letakObjekLama || '')}</td>
-                                <td class="text-right align-middle">${item.luasBumiLama ? item.luasBumiLama + ' m²' : ''}</td>
-                                <td class="text-right align-middle">${item.luasBangunanLama ? item.luasBangunanLama + ' m²' : ''}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.namaBaru || '')}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.letakObjekBaru || '')}</td>
-                                <td class="text-right align-middle">${item.luasBumiBaru ? item.luasBumiBaru + ' m²' : ''}</td>
-                                <td class="text-right align-middle">${item.luasBangunanBaru ? item.luasBangunanBaru + ' m²' : ''}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.alasan || '')}</td>
-                            </tr>
-                        `;
+                    thData = `<tr><th rowspan="2" class="border border-slate-300">NO</th><th rowspan="2" class="border border-slate-300">NOP</th><th colspan="2" class="border border-slate-300">DATA LAMA (SPPT)</th><th colspan="2" class="border border-slate-300">DATA BARU (SEBENARNYA)</th><th rowspan="2" class="border border-slate-300">ALASAN PEMUTAKHIRAN</th></tr><tr><th class="border border-slate-300">NAMA & OBJEK</th><th class="border border-slate-300">LUAS (B/B)</th><th class="border border-slate-300">NAMA & OBJEK</th><th class="border border-slate-300">LUAS (B/B)</th></tr>`;
+                    list.forEach((i, x) => {
+                        tbData += `<tr><td align="center" class="border border-slate-300 py-1">${x + 1}</td><td align="center" class="border border-slate-300 px-1">${i.nop}</td><td class="border border-slate-300 px-1">${window.escapeHtml(i.namaLama)}<br>${window.escapeHtml(i.letakObjekLama)}</td><td align="center" class="border border-slate-300 px-1">${i.luasBumiLama || '-'} / ${i.luasBangunanLama || '-'}</td><td class="border border-slate-300 px-1">${window.escapeHtml(i.namaBaru)}<br>${window.escapeHtml(i.letakObjekBaru)}</td><td align="center" class="border border-slate-300 px-1">${i.luasBumiBaru || '-'} / ${i.luasBangunanBaru || '-'}</td><td class="border border-slate-300 px-1 text-[10px]">${window.escapeHtml(i.alasan)}</td></tr>`;
                     });
-                } else if (category === 'penghapusan') {
-                    tableHtml += `
-                        <thead>
-                            <tr>
-                                <th class="text-center align-middle">NO</th>
-                                <th class="text-center align-middle">NAMA</th>
-                                <th class="text-center align-middle">ALAMAT WP / RT / RW</th>
-                                <th class="text-center align-middle">NOP</th>
-                                <th class="text-center align-middle">ALAMAT OBJEK PAJAK / RT / RW</th>
-                                <th class="text-center align-middle">LUAS TANAH (M2)</th>
-                                <th class="text-center align-middle">LUAS BANGUNAN (M2)</th>
-                                <th class="text-center align-middle">ALASAN PENGHAPUSAN</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                    `;
-                    list.forEach((item, i) => {
-                        tableHtml += `
-                            <tr>
-                                <td class="text-center align-middle">${i + 1}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.nama)}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.alamatWp || '')}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.nop)}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.letakObjek || '')}</td>
-                                <td class="text-right align-middle">${item.luasTanah ? item.luasTanah + ' m²' : ''}</td>
-                                <td class="text-right align-middle">${item.luasBangunan ? item.luasBangunan + ' m²' : ''}</td>
-                                <td class="text-center align-middle">${window.escapeHtml(item.alasan || '')}</td>
-                            </tr>
-                        `;
+                } else {
+                    thData = `<tr><th class="border border-slate-300">NO</th><th class="border border-slate-300">NAMA WP</th><th class="border border-slate-300">NOP</th><th class="border border-slate-300">LETAK OBJEK</th><th class="border border-slate-300">ALASAN PENGHAPUSAN</th></tr>`;
+                    list.forEach((i, x) => {
+                        tbData += `<tr><td align="center" class="border border-slate-300 py-1">${x + 1}</td><td class="border border-slate-300 px-1">${window.escapeHtml(i.nama)}</td><td align="center" class="border border-slate-300 px-1">${i.nop}</td><td class="border border-slate-300 px-1">${window.escapeHtml(i.letakObjek)}</td><td class="border border-slate-300 px-1">${window.escapeHtml(i.alasan)}</td></tr>`;
                     });
                 }
-
-                tableHtml += `</tbody></table>`;
-                container.innerHTML = tableHtml;
+                container.innerHTML = `<table class="w-full text-xs print-table"><thead>${thData}</thead><tbody>${tbData}</tbody></table>`;
             }
-
             window.print();
         };
 
-        window.uploadSelectedFileToDrive = async function() {
-            if (!window.selectedFileBase64) {
-                window.showToast("Silakan pilih file Surat Pengantar terlebih dahulu.", "error");
-                return;
-            }
-
-            const appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxSvsH1TLiHXBqhBWvhaWEjkLmbcvey1-IUfLCvXAcmsEeEqxAHODUKsys1kznDHowa3A/exec';
-            const progressBox = document.getElementById('uploadProgressBox');
-            const statusText = document.getElementById('uploadStatusText');
-            const driveLinkEl = document.getElementById('uploadedDriveLink');
-            const btnUpload = document.getElementById('btnUploadDrive');
-
-            if (progressBox) progressBox.classList.remove('hidden');
-            if (driveLinkEl) driveLinkEl.classList.add('hidden');
-            if (statusText) statusText.innerHTML = `<i class="fa-solid fa-spinner animate-spin text-emerald-600"></i> Mengunggah ke folder "PengajuanPBBKolektifDesa"...`;
-            if (btnUpload) btnUpload.disabled = true;
-            window.safeSetText('btnUploadText', "Mengunggah...");
-
-            try {
-                const payload = {
-                    filename: window.selectedFileName,
-                    mimeType: window.selectedFileMime,
-                    base64: window.selectedFileBase64
-                };
-
-                const response = await fetch(appsScriptUrl, {
-                    method: 'POST',
-                    body: JSON.stringify(payload)
-                });
-
-                const resData = await response.json();
-                if (resData.result === 'success' && resData.url) {
-                    const inputUrl = document.getElementById('metaSuratPengantarUrl');
-                    if (inputUrl) inputUrl.value = resData.url;
-                    if (statusText) statusText.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i> Terupload ke folder PengajuanPBBKolektifDesa!`;
-                    if (driveLinkEl) {
-                        driveLinkEl.href = resData.url;
-                        driveLinkEl.classList.remove('hidden');
-                    }
-                    window.showToast("File berhasil disimpan di folder PengajuanPBBKolektifDesa!", "success");
-                } else {
-                    throw new Error(resData.error || "Gagal mengunggah file");
-                }
-            } catch (err) {
-                console.warn("Apps Script upload fallback:", err);
-                const fallbackDataUrl = `data:${window.selectedFileMime};base64,${window.selectedFileBase64}`;
-                const inputUrl = document.getElementById('metaSuratPengantarUrl');
-                if (inputUrl) inputUrl.value = fallbackDataUrl;
-                if (statusText) statusText.innerHTML = `<i class="fa-solid fa-circle-info text-amber-600"></i> Berkas dilampirkan langsung ke form.`;
-                window.showToast("File dilampirkan ke data.", "info");
-            }
-
-            if (btnUpload) btnUpload.disabled = false;
-            window.safeSetText('btnUploadText', "Upload Ke Drive");
-        };
-
-        window.handleFileSelect = function(event) {
-            const file = event.target.files[0];
-            const btnUpload = document.getElementById('btnUploadDrive');
+        window.handleFileSelect = function(e) {
+            const file = e.target.files[0];
+            const btn = document.getElementById('btnUploadDrive');
             if (!file) {
-                if (btnUpload) btnUpload.disabled = true;
+                if (btn) btn.disabled = true;
                 window.selectedFileBase64 = null;
                 return;
             }
-
-            if (file.size > 15 * 1024 * 1024) {
-                window.showToast("Ukuran file terlalu besar (Maksimal 15MB)", "error");
-                event.target.value = '';
-                if (btnUpload) btnUpload.disabled = true;
+            if (file.size > 5 * 1024 * 1024) {
+                window.showToast("Ukuran file melebihi 5MB!", "error");
+                e.target.value = '';
+                if (btn) btn.disabled = true;
                 return;
             }
-
             window.selectedFileName = file.name;
-            window.selectedFileMime = file.type || 'application/octet-stream';
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                window.selectedFileBase64 = e.target.result.split(',')[1];
-                if (btnUpload) btnUpload.disabled = false;
-                window.showToast(`File "${file.name}" siap diupload ke Drive.`, "info");
+            window.selectedFileMime = file.type || 'application/pdf';
+            const r = new FileReader();
+            r.onload = (ev) => {
+                window.selectedFileBase64 = ev.target.result.split(',')[1];
+                if (btn) btn.disabled = false;
+                window.showToast("File siap diupload", "info");
             };
-            reader.readAsDataURL(file);
+            r.readAsDataURL(file);
         };
+
+        window.uploadSelectedFileToDrive = async function() {
+            if (!window.selectedFileBase64) return window.showToast("Pilih file dulu!", "error");
+            document.getElementById('uploadProgressBox').classList.remove('hidden');
+            document.getElementById('btnUploadDrive').disabled = true;
+            window.safeSetText('btnUploadText', "Loading...");
+            
+            try {
+                // Use default App Script Endpoint for File Upload or similar service
+                const url = 'https://script.google.com/macros/s/AKfycbxSvsH1TLiHXBqhBWvhaWEjkLmbcvey1-IUfLCvXAcmsEeEqxAHODUKsys1kznDHowa3A/exec';
+                const res = await fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify({ filename: window.selectedFileName, mimeType: window.selectedFileMime, base64: window.selectedFileBase64 })
+                });
+                const data = await res.json();
+                if (data.result === 'success' && data.url) {
+                    document.getElementById('metaSuratPengantarUrl').value = data.url;
+                    document.getElementById('uploadStatusText').innerHTML = `<i class="fa-solid fa-check text-emerald-600"></i> Terupload!`;
+                    document.getElementById('uploadedDriveLink').href = data.url;
+                    document.getElementById('uploadedDriveLink').classList.remove('hidden');
+                    window.showToast("File sukses diupload ke GDrive", "success");
+                } else throw new Error("Gagal upload");
+            } catch(e) {
+                document.getElementById('metaSuratPengantarUrl').value = `data:${window.selectedFileMime};base64,${window.selectedFileBase64}`;
+                document.getElementById('uploadStatusText').innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600"></i> Terlampir (Fallback Mode)`;
+                window.showToast("Peringatan: File disimpan sementara menggunakan mode base64 karena Drive belum terkonfigurasi sempurna.", "warning");
+            }
+            document.getElementById('btnUploadDrive').disabled = false;
+            window.safeSetText('btnUploadText', "Upload Ke Drive");
+        };
+
+        window.handleLoginSubmit = function(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const pwd = document.getElementById('loginPassword').value;
+            const role = window.currentLoginRole;
+            
+            const kec = document.getElementById('loginKecamatan')?.value || '';
+            const desa = document.getElementById('loginDesa')?.value || '';
+            const nama = document.getElementById('loginNamaPetugas')?.value.trim() || 'PETUGAS DESA';
+
+            if (role === 'petugas' && (!kec || !desa)) {
+                return window.showToast("Pilih Kecamatan dan Desa!", "error");
+            }
+
+            if (window.triggerFirebaseAuth) {
+                window.triggerFirebaseAuth(email, pwd, role, kec, desa, nama);
+            } else {
+                window.showToast("Sistem Auth belum siap, silahkan tunggu.", "warning");
+            }
+        };
+
+        window.handleFormSubmit = function(event, category) {
+            event.preventDefault();
+            if (window.triggerFirebaseSubmit) {
+                window.triggerFirebaseSubmit(category);
+            } else {
+                window.showToast("Sistem database belum siap.", "warning");
+            }
+        };
+
+        window.deleteRecord = function(category, id) {
+            if (!confirm("Yakin ingin menghapus data ini? Aksi ini tidak dapat dibatalkan!")) return;
+            if (window.triggerFirebaseDelete) {
+                window.triggerFirebaseDelete(category, id);
+            } else {
+                window.showToast("Sistem database belum siap.", "warning");
+            }
+        };
+
     </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAZmImhnXnOBqeUG35WkF2qWp0u9aKgZmo",
@@ -2437,239 +2352,181 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
+        let currentUserId = 'anonymous_user';
+
         window.authInstance = auth;
 
-        // Firebase Auth State Listener
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const email = user.email ? user.email.toLowerCase() : '';
-                if (email.includes('admin') || window.currentLoginRole === 'admin') {
-                    window.currentUser = {
-                        role: 'admin',
-                        name: 'ADMIN KABUPATEN',
-                        kecamatan: '',
-                        desa: ''
-                    };
+        // Firebase Auth Implementation
+        window.triggerFirebaseAuth = async (email, pwd, role, kec, desa, nama) => {
+            try {
+                const userCred = await signInWithEmailAndPassword(auth, email, pwd);
+                currentUserId = userCred.user.uid;
+                
+                // VALIDASI ROLE DARI REALTIME DATABASE
+                const userRef = ref(db, `users/${currentUserId}`);
+                const snapshot = await get(userRef);
+                
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    const dbRole = userData.role;
+                    
+                    // Cek jika role di tab yang diklik TIDAK SAMA dengan role di database
+                    if (dbRole !== role) {
+                        await signOut(auth); // Keluarkan user secara paksa
+                        window.showToast(`Akses Ditolak: Akun Anda terdaftar sebagai ${dbRole.toUpperCase()}, bukan ${role.toUpperCase()}!`, "error");
+                        return; // Hentikan proses login
+                    }
                 } else {
-                    const kec = document.getElementById('loginKecamatan')?.value.trim().toUpperCase() || '';
-                    const desa = document.getElementById('loginDesa')?.value.trim().toUpperCase() || '';
-                    const nama = (document.getElementById('loginNamaPetugas')?.value.trim() || email.split('@')[0]).toUpperCase();
-
-                    window.currentUser = {
-                        role: 'petugas',
-                        name: nama,
-                        kecamatan: kec,
-                        desa: desa
-                    };
-                }
-                window.initAuthSession();
-            } else {
-                window.currentUser = null;
-                window.initAuthSession();
-            }
-        });
-
-        window.handleLoginSubmit = async function(event) {
-            event.preventDefault();
-            const email = document.getElementById('loginEmail')?.value.trim();
-            const password = document.getElementById('loginPassword')?.value;
-
-            if (window.currentLoginRole === 'petugas') {
-                const kec = document.getElementById('loginKecamatan')?.value.trim();
-                const desa = document.getElementById('loginDesa')?.value.trim();
-                if (!kec || !desa) {
-                    window.showToast("SILAKAN PILIH KECAMATAN DAN DESA / KELURAHAN TUGAS TERLEBIH DAHULU!", "error");
-                    if (!kec) document.getElementById('loginKecamatan')?.focus();
-                    else document.getElementById('loginDesa')?.focus();
+                    // Jika data role tidak ditemukan di node users
+                    await signOut(auth);
+                    window.showToast("Akses Ditolak: Role akun Anda tidak dikonfigurasi di database.", "error");
                     return;
                 }
-            }
 
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                window.showToast("Berhasil masuk sistem!", "success");
+                window.currentUser = {
+                    uid: currentUserId,
+                    email: userCred.user.email,
+                    role: role,
+                    kecamatan: role === 'admin' ? '' : kec,
+                    desa: role === 'admin' ? '' : desa,
+                    name: role === 'admin' ? 'ADMIN KABUPATEN' : nama.toUpperCase()
+                };
+                
                 window.closeLoginModal();
-            } catch (err) {
-                console.error("Login Auth Error:", err);
-                window.showToast("Gagal Login: " + (err.message || "Periksa kembali email dan password Anda."), "error");
+                window.showToast("Berhasil Login ke Sistem!", "success");
+                window.initAuthSession();
+            } catch(e) {
+                window.showToast("Gagal masuk! Cek kembali email dan password.", "error");
+                console.error("Auth error:", e);
             }
         };
 
+        window.triggerFirebaseSignOut = async () => {
+            await signOut(auth);
+            currentUserId = 'anonymous_user';
+        };
+
+        // Real-time Listeners
         ['pendaftaran', 'pemutakhiran', 'penghapusan'].forEach(cat => {
-            const catRef = ref(db, `pbb_2026/${cat}`);
-            onValue(catRef, (snapshot) => {
-                const val = snapshot.val();
-                const list = [];
-                if (val) {
-                    Object.keys(val).forEach(key => {
-                        list.push({ id: key, ...val[key] });
-                    });
-                }
-                window.recordsData[cat] = list;
-                if (window.activeTab === 'laporan') {
-                    window.renderLaporanTable();
-                } else {
-                    window.renderTable(cat);
-                }
-            }, (err) => {
-                console.error("Firebase fetch error:", err);
+            onValue(ref(db, `pbb_2026/${cat}`), (snap) => {
+                const val = snap.val();
+                window.recordsData[cat] = val ? Object.keys(val).map(k => ({id: k, ...val[k]})) : [];
+                window.renderCurrentTabTable();
             });
         });
 
-        const masterRef = ref(db, 'pbb_2026/master_wilayah');
-        onValue(masterRef, (snapshot) => {
-            const val = snapshot.val();
+        onValue(ref(db, 'pbb_2026/master_wilayah'), (snap) => {
+            const val = snap.val();
             if (val && Array.isArray(val) && val.length > 0) {
                 window.masterWilayahList = val;
-            } else if (!val && window.defaultMasterWilayahData) {
-                set(masterRef, window.defaultMasterWilayahData);
+                if(window.populateLoginWilayahDropdowns) window.populateLoginWilayahDropdowns();
+                window.renderCurrentTabTable();
             }
-            if (typeof window.initHeaderWilayahDropdowns === 'function') {
-                window.initHeaderWilayahDropdowns();
-            }
-            if (window.activeTab === 'laporan') {
-                window.renderLaporanTable();
-            }
-        }, (err) => {
-            console.error("Firebase master wilayah fetch error:", err);
         });
 
-        window.syncMasterWilayahToFirebase = async function(list) {
-            try {
-                const mRef = ref(db, 'pbb_2026/master_wilayah');
-                await set(mRef, list);
-            } catch(err) {
-                console.error("Firebase sync master error:", err);
-                window.showToast("Gagal menyinkronkan master data ke Firebase: " + err.message, "error");
-            }
+        window.syncMasterWilayahToFirebase = (list) => {
+            set(ref(db, 'pbb_2026/master_wilayah'), list)
+                .catch(e => window.showToast("Gagal sinkronisasi master wilayah: " + e.message, "error"));
         };
 
-        window.handleFormSubmit = async function(event, category) {
-            event.preventDefault();
+        window.triggerFirebaseDelete = async (cat, id) => {
             try {
-                const tahun = document.getElementById('metaTahun')?.value.trim() || '';
-                const kec = (document.getElementById('metaKecamatan')?.value.trim() || '').toUpperCase();
-                const desa = (document.getElementById('metaDesa')?.value.trim() || '').toUpperCase();
-                const rt = (document.getElementById('metaRT')?.value.trim() || '').toUpperCase();
-                const suratUrl = document.getElementById('metaSuratPengantarUrl')?.value.trim() || '';
+                await remove(ref(db, `pbb_2026/${cat}/${id}`));
+                window.showToast("Data berhasil dihapus dari database", "success");
+            } catch(e) { window.showToast("Gagal menghapus data: " + e.message, "error"); }
+        };
 
-                if (!tahun || !kec || !desa) {
-                    window.showToast("WAJIB MEMILIH TAHUN PAJAK, KECAMATAN, DAN DESA/KELURAHAN TERLEBIH DAHULU!", "error");
-                    if (!tahun) document.getElementById('metaTahun')?.focus();
-                    else if (!kec) document.getElementById('metaKecamatan')?.focus();
-                    else if (!desa) document.getElementById('metaDesa')?.focus();
-                    return;
-                }
+        window.triggerFirebaseSubmit = async (cat) => {
+            const tahun = document.getElementById('metaTahun')?.value.trim();
+            const kec = document.getElementById('metaKecamatan')?.value.trim();
+            const desa = document.getElementById('metaDesa')?.value.trim();
+            
+            if (!tahun || !kec || !desa) return window.showToast("Harap lengkapi Tahun, Kecamatan, dan Desa di header!", "error");
 
-                let recordData = {
-                    tahun: tahun,
-                    kecamatan: kec,
-                    desa: desa,
-                    rt: rt,
-                    suratPengantarUrl: suratUrl,
-                    updatedAt: new Date().toISOString()
-                };
+            let recId = document.getElementById(`${cat}RecordId`)?.value;
+            let data = {
+                tahun: tahun, 
+                kecamatan: kec.toUpperCase(), 
+                desa: desa.toUpperCase(),
+                rt: document.getElementById('metaRT')?.value.trim().toUpperCase() || '',
+                suratPengantarUrl: document.getElementById('metaSuratPengantarUrl')?.value || '',
+                updatedAt: new Date().toISOString(),
+                submittedBy: window.currentUser ? window.currentUser.name : 'ANONYMOUS',
+                userId: currentUserId
+            };
 
-                let recId = '';
+            if (cat === 'pendaftaran') {
+                data.nama = document.getElementById('pendNama').value;
+                data.nik = document.getElementById('pendNik').value;
+                data.alamatWpBase = document.getElementById('pendAlamatWp').value;
+                data.rtWp = document.getElementById('pendRtWp').value;
+                data.rwWp = document.getElementById('pendRwWp').value;
+                data.alamatWp = window.combineAddressWithRtRw(data.alamatWpBase, data.rtWp, data.rwWp);
+                
+                data.letakObjekBase = document.getElementById('pendLetakObjek').value;
+                data.rtObjek = document.getElementById('pendRtObjek').value;
+                data.rwObjek = document.getElementById('pendRwObjek').value;
+                data.letakObjek = window.combineAddressWithRtRw(data.letakObjekBase, data.rtObjek, data.rwObjek);
+                
+                data.luasBumi = document.getElementById('pendLuasBumi').value;
+                data.luasBangunan = document.getElementById('pendLuasBangunan').value;
+                data.thnDbgn = document.getElementById('pendThnDbgn').value;
+                data.thnRenov = document.getElementById('pendThnRenov').value;
+                data.listrik = document.getElementById('pendListrik').value;
+                data.keterangan = document.getElementById('pendKeterangan').value;
+            } else if (cat === 'pemutakhiran') {
+                data.nop = document.getElementById('pemNOP').value;
+                data.namaLama = document.getElementById('pemNamaLama').value;
+                data.nikLama = document.getElementById('pemNikLama').value;
+                data.alamatWpLama = document.getElementById('pemAlamatWpLama').value;
+                data.letakObjekLama = document.getElementById('pemLetakObjekLama').value;
+                data.luasBumiLama = document.getElementById('pemLuasBumiLama').value;
+                data.luasBangunanLama = document.getElementById('pemLuasBangunanLama').value;
+                
+                data.namaBaru = document.getElementById('pemNamaBaru').value;
+                data.nikBaru = document.getElementById('pemNikBaru').value;
+                data.alamatWpBaruBase = document.getElementById('pemAlamatWpBaru').value;
+                data.rtWpBaru = document.getElementById('pemRtWpBaru').value;
+                data.rwWpBaru = document.getElementById('pemRwWpBaru').value;
+                data.alamatWpBaru = window.combineAddressWithRtRw(data.alamatWpBaruBase, data.rtWpBaru, data.rwWpBaru);
+                
+                data.letakObjekBaruBase = document.getElementById('pemLetakObjekBaru').value;
+                data.rtObjekBaru = document.getElementById('pemRtObjekBaru').value;
+                data.rwObjekBaru = document.getElementById('pemRwObjekBaru').value;
+                data.letakObjekBaru = window.combineAddressWithRtRw(data.letakObjekBaruBase, data.rtObjekBaru, data.rwObjekBaru);
+                
+                data.luasBumiBaru = document.getElementById('pemLuasBumiBaru').value;
+                data.luasBangunanBaru = document.getElementById('pemLuasBangunanBaru').value;
+                data.alasan = document.getElementById('pemAlasan').value;
+            } else if (cat === 'penghapusan') {
+                data.nama = document.getElementById('hapusNama').value;
+                data.nop = document.getElementById('hapusNOP').value;
+                data.alamatWpBase = document.getElementById('hapusAlamatWp').value;
+                data.rtWp = document.getElementById('hapusRtWp').value;
+                data.rwWp = document.getElementById('hapusRwWp').value;
+                data.alamatWp = window.combineAddressWithRtRw(data.alamatWpBase, data.rtWp, data.rwWp);
+                
+                data.letakObjekBase = document.getElementById('hapusLetakObjek').value;
+                data.rtObjek = document.getElementById('hapusRtObjek').value;
+                data.rwObjek = document.getElementById('hapusRwObjek').value;
+                data.letakObjek = window.combineAddressWithRtRw(data.letakObjekBase, data.rtObjek, data.rwObjek);
+                
+                data.luasTanah = document.getElementById('hapusLuasTanah').value;
+                data.luasBangunan = document.getElementById('hapusLuasBangunan').value;
+                data.alasan = document.getElementById('hapusAlasan').value;
+            }
 
-                if (category === 'pendaftaran') {
-                    recId = document.getElementById('pendaftaranRecordId')?.value;
-                    recordData.nama = (document.getElementById('pendNama')?.value.trim() || '').toUpperCase();
-                    recordData.nik = (document.getElementById('pendNik')?.value.trim() || '').toUpperCase();
-                    recordData.alamatWpBase = (document.getElementById('pendAlamatWp')?.value.trim() || '').toUpperCase();
-                    recordData.rtWp = (document.getElementById('pendRtWp')?.value.trim() || '').replace(/\D/g, '').padStart(3, '0').slice(-3);
-                    recordData.rwWp = (document.getElementById('pendRwWp')?.value.trim() || '').replace(/\D/g, '').padStart(2, '0').slice(-2);
-                    recordData.alamatWp = window.combineAddressWithRtRw(recordData.alamatWpBase, recordData.rtWp, recordData.rwWp);
-
-                    recordData.letakObjekBase = (document.getElementById('pendLetakObjek')?.value.trim() || '').toUpperCase();
-                    recordData.rtObjek = (document.getElementById('pendRtObjek')?.value.trim() || '').replace(/\D/g, '').padStart(3, '0').slice(-3);
-                    recordData.rwObjek = (document.getElementById('pendRwObjek')?.value.trim() || '').replace(/\D/g, '').padStart(2, '0').slice(-2);
-                    recordData.letakObjek = window.combineAddressWithRtRw(recordData.letakObjekBase, recordData.rtObjek, recordData.rwObjek);
-
-                    recordData.luasBumi = document.getElementById('pendLuasBumi')?.value || '';
-                    recordData.luasBangunan = document.getElementById('pendLuasBangunan')?.value || '';
-                    recordData.thnDbgn = document.getElementById('pendThnDbgn')?.value || '';
-                    recordData.thnRenov = document.getElementById('pendThnRenov')?.value || '';
-                    recordData.listrik = (document.getElementById('pendListrik')?.value || '').toUpperCase();
-                    recordData.keterangan = (document.getElementById('pendKeterangan')?.value || '').toUpperCase();
-                } else if (category === 'pemutakhiran') {
-                    recId = document.getElementById('pemutakhiranRecordId')?.value;
-                    recordData.nop = (document.getElementById('pemNOP')?.value.trim() || '').toUpperCase();
-                    recordData.namaLama = (document.getElementById('pemNamaLama')?.value.trim() || '').toUpperCase();
-                    recordData.nikLama = (document.getElementById('pemNikLama')?.value.trim() || '').toUpperCase();
-                    recordData.alamatWpLama = (document.getElementById('pemAlamatWpLama')?.value.trim() || '').toUpperCase();
-                    recordData.letakObjekLama = (document.getElementById('pemLetakObjekLama')?.value.trim() || '').toUpperCase();
-                    recordData.luasBumiLama = document.getElementById('pemLuasBumiLama')?.value || '';
-                    recordData.luasBangunanLama = document.getElementById('pemLuasBangunanLama')?.value || '';
-
-                    recordData.namaBaru = (document.getElementById('pemNamaBaru')?.value.trim() || '').toUpperCase();
-                    recordData.nikBaru = (document.getElementById('pemNikBaru')?.value.trim() || '').toUpperCase();
-                    recordData.alamatWpBaruBase = (document.getElementById('pemAlamatWpBaru')?.value.trim() || '').toUpperCase();
-                    recordData.rtWpBaru = (document.getElementById('pemRtWpBaru')?.value.trim() || '').replace(/\D/g, '').padStart(3, '0').slice(-3);
-                    recordData.rwWpBaru = (document.getElementById('pemRwWpBaru')?.value.trim() || '').replace(/\D/g, '').padStart(2, '0').slice(-2);
-                    recordData.alamatWpBaru = window.combineAddressWithRtRw(recordData.alamatWpBaruBase, recordData.rtWpBaru, recordData.rwWpBaru);
-
-                    recordData.letakObjekBaruBase = (document.getElementById('pemLetakObjekBaru')?.value.trim() || '').toUpperCase();
-                    recordData.rtObjekBaru = (document.getElementById('pemRtObjekBaru')?.value.trim() || '').replace(/\D/g, '').padStart(3, '0').slice(-3);
-                    recordData.rwObjekBaru = (document.getElementById('pemRwObjekBaru')?.value.trim() || '').replace(/\D/g, '').padStart(2, '0').slice(-2);
-                    recordData.letakObjekBaru = window.combineAddressWithRtRw(recordData.letakObjekBaruBase, recordData.rtObjekBaru, recordData.rwObjekBaru);
-
-                    recordData.luasBumiBaru = document.getElementById('pemLuasBumiBaru')?.value || '';
-                    recordData.luasBangunanBaru = document.getElementById('pemLuasBangunanBaru')?.value || '';
-                    recordData.alasan = (document.getElementById('pemAlasan')?.value.trim() || '').toUpperCase();
-                } else if (category === 'penghapusan') {
-                    recId = document.getElementById('penghapusanRecordId')?.value;
-                    recordData.nama = (document.getElementById('hapusNama')?.value.trim() || '').toUpperCase();
-                    recordData.alamatWpBase = (document.getElementById('hapusAlamatWp')?.value.trim() || '').toUpperCase();
-                    recordData.rtWp = (document.getElementById('hapusRtWp')?.value.trim() || '').replace(/\D/g, '').padStart(3, '0').slice(-3);
-                    recordData.rwWp = (document.getElementById('hapusRwWp')?.value.trim() || '').replace(/\D/g, '').padStart(2, '0').slice(-2);
-                    recordData.alamatWp = window.combineAddressWithRtRw(recordData.alamatWpBase, recordData.rtWp, recordData.rwWp);
-
-                    recordData.nop = (document.getElementById('hapusNOP')?.value.trim() || '').toUpperCase();
-                    recordData.letakObjekBase = (document.getElementById('hapusLetakObjek')?.value.trim() || '').toUpperCase();
-                    recordData.rtObjek = (document.getElementById('hapusRtObjek')?.value.trim() || '').replace(/\D/g, '').padStart(3, '0').slice(-3);
-                    recordData.rwObjek = (document.getElementById('hapusRwObjek')?.value.trim() || '').replace(/\D/g, '').padStart(2, '0').slice(-2);
-                    recordData.letakObjek = window.combineAddressWithRtRw(recordData.letakObjekBase, recordData.rtObjek, recordData.rwObjek);
-
-                    recordData.luasTanah = document.getElementById('hapusLuasTanah')?.value || '';
-                    recordData.luasBangunan = document.getElementById('hapusLuasBangunan')?.value || '';
-                    recordData.alasan = (document.getElementById('hapusAlasan')?.value.trim() || '').toUpperCase();
-                }
-
+            try {
                 if (recId) {
-                    const itemRef = ref(db, `pbb_2026/${category}/${recId}`);
-                    await update(itemRef, recordData);
-                    window.showToast("Data berhasil diperbarui di database!", "success");
+                    await update(ref(db, `pbb_2026/${cat}/${recId}`), data);
+                    window.showToast("Data berhasil diperbarui di server!", "success");
                 } else {
-                    recordData.createdAt = new Date().toISOString();
-                    const listRef = ref(db, `pbb_2026/${category}`);
-                    const newRef = push(listRef);
-                    await set(newRef, recordData);
-                    window.showToast("Data baru berhasil disimpan ke database!", "success");
+                    data.createdAt = new Date().toISOString();
+                    await set(push(ref(db, `pbb_2026/${cat}`)), data);
+                    window.showToast("Data usulan baru berhasil disimpan!", "success");
                 }
-
-                window.resetForm(category);
-            } catch (err) {
-                console.error("Save error:", err);
-                window.showToast("Gagal menyimpan ke database: " + err.message, "error");
-            }
-        };
-
-        window.deleteRecord = async function(category, id) {
-            if (window.currentUser && window.currentUser.role !== 'admin') {
-                window.showToast("AKSES DITOLAK: Hanya Admin Kabupaten yang diizinkan menghapus data!", "error");
-                return;
-            }
-
-            if (!confirm("Apakah Anda yakin ingin menghapus data ini?")) return;
-            try {
-                const itemRef = ref(db, `pbb_2026/${category}/${id}`);
-                await remove(itemRef);
-                window.showToast("Data berhasil dihapus dari database.", "success");
-            } catch (err) {
-                console.error("Delete error:", err);
-                window.showToast("Gagal menghapus data: " + err.message, "error");
-            }
+                window.resetForm(cat);
+            } catch(e) { window.showToast("Gagal menyimpan data: " + e.message, "error"); }
         };
     </script>
 </body>
