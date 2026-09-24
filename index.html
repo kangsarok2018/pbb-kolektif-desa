@@ -750,32 +750,31 @@
                 </button>
             </div>
 
+            <!-- Role Selector Tabs -->
+            <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl">
+                <button type="button" id="roleBtnPetugas" onclick="switchLoginRole('petugas')" class="py-2.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 bg-white text-indigo-900 shadow">
+                    <i class="fa-solid fa-house-user"></i> Petugas Desa
+                </button>
+                <button type="button" id="roleBtnAdmin" onclick="switchLoginRole('admin')" class="py-2.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900">
+                    <i class="fa-solid fa-user-shield"></i> Admin Kab.
+                </button>
+            </div>
+
             <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase">PILIH PERAN / AKSES <span class="text-red-500">*</span></label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="cursor-pointer border border-slate-300 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 hover:bg-slate-50 transition has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50/50 has-[:checked]:text-indigo-900">
-                            <input type="radio" name="loginRole" value="petugas" checked onchange="toggleLoginRoleFields()" class="sr-only">
-                            <i class="fa-solid fa-house-user text-lg text-indigo-600"></i>
-                            <span class="text-xs font-bold uppercase text-center">Petugas Desa</span>
-                        </label>
-                        <label class="cursor-pointer border border-slate-300 rounded-xl p-3 flex flex-col items-center justify-center gap-1.5 hover:bg-slate-50 transition has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50/50 has-[:checked]:text-indigo-900">
-                            <input type="radio" name="loginRole" value="admin" onchange="toggleLoginRoleFields()" class="sr-only">
-                            <i class="fa-solid fa-user-gear text-lg text-amber-600"></i>
-                            <span class="text-xs font-bold uppercase text-center">Admin Kab.</span>
-                        </label>
-                    </div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase">EMAIL AKUN FIREBASE <span class="text-red-500">*</span></label>
+                    <input type="email" id="loginEmail" required placeholder="Contoh: petugas@desa.id atau admin@desa.id" class="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 font-mono">
                 </div>
 
-                <div id="loginPetugasFields" class="space-y-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                <div id="loginPetugasExtras" class="space-y-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
                     <div>
-                        <label class="block text-[11px] font-semibold text-slate-700 mb-1 uppercase">KECAMATAN <span class="text-red-500">*</span></label>
+                        <label class="block text-[11px] font-semibold text-slate-700 mb-1 uppercase">KECAMATAN TUGAS <span class="text-red-500">*</span></label>
                         <select id="loginKecamatan" onchange="handleLoginKecamatanChange()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg uppercase bg-white font-semibold">
                             <option value="">-- PILIH KECAMATAN --</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-[11px] font-semibold text-slate-700 mb-1 uppercase">DESA / KELURAHAN <span class="text-red-500">*</span></label>
+                        <label class="block text-[11px] font-semibold text-slate-700 mb-1 uppercase">DESA / KELURAHAN TUGAS <span class="text-red-500">*</span></label>
                         <select id="loginDesa" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg uppercase bg-white font-semibold">
                             <option value="">-- PILIH KECAMATAN DAHULU --</option>
                         </select>
@@ -787,9 +786,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1 uppercase">PASSWORD / PIN <span class="text-red-500">*</span></label>
-                    <input type="password" id="loginPassword" required placeholder="Masukkan password..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
-                    <p class="text-[10px] text-slate-400 mt-1">Default Petugas: <code class="bg-slate-100 px-1 rounded font-mono">desa2026</code> | Admin: <code class="bg-slate-100 px-1 rounded font-mono">admin2026</code></p>
+                    <label class="block text-xs font-bold text-slate-700 mb-1 uppercase">PASSWORD <span class="text-red-500">*</span></label>
+                    <input type="password" id="loginPassword" required placeholder="Masukkan password akun..." class="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
                 </div>
 
                 <div class="flex justify-end gap-2 pt-2 border-t">
@@ -808,6 +806,7 @@
     <script>
         window.activeTab = 'pendaftaran';
         window.currentUser = null;
+        window.currentLoginRole = 'petugas';
 
         window.recordsData = {
             pendaftaran: [],
@@ -1078,6 +1077,23 @@
             desaSelect.innerHTML = html;
         };
 
+        window.switchLoginRole = function(role) {
+            window.currentLoginRole = role;
+            const btnPetugas = document.getElementById('roleBtnPetugas');
+            const btnAdmin = document.getElementById('roleBtnAdmin');
+            const extras = document.getElementById('loginPetugasExtras');
+
+            if (role === 'petugas') {
+                if (btnPetugas) btnPetugas.className = "py-2.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 bg-white text-indigo-900 shadow";
+                if (btnAdmin) btnAdmin.className = "py-2.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900";
+                if (extras) extras.classList.remove('hidden');
+            } else {
+                if (btnAdmin) btnAdmin.className = "py-2.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 bg-white text-indigo-900 shadow";
+                if (btnPetugas) btnPetugas.className = "py-2.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900";
+                if (extras) extras.classList.add('hidden');
+            }
+        };
+
         window.getFilteredCategoryRecords = function(category) {
             const list = window.recordsData[category] || [];
             const selKec = (document.getElementById('metaKecamatan')?.value || '').trim().toUpperCase();
@@ -1127,8 +1143,15 @@
                 if (window.currentUser.role === 'admin') {
                     if (pName) pName.innerText = "ADMIN KABUPATEN";
                     if (pScope) pScope.innerText = "AKSES PENUH KABUPATEN MERANGIN";
-                    if (kecSelect) kecSelect.disabled = false;
-                    if (desaSelect) desaSelect.disabled = false;
+                    if (kecSelect) {
+                        kecSelect.value = "";
+                        kecSelect.disabled = false;
+                    }
+                    window.handleKecamatanHeaderChange();
+                    if (desaSelect) {
+                        desaSelect.value = "";
+                        desaSelect.disabled = false;
+                    }
                 } else {
                     if (pName) pName.innerText = window.currentUser.name || "PETUGAS DESA";
                     if (pScope) pScope.innerText = `${window.currentUser.desa} (${window.currentUser.kecamatan})`;
@@ -1158,24 +1181,11 @@
             if (!modal) return;
             modal.classList.remove('hidden');
             window.populateLoginWilayahDropdowns();
-            window.toggleLoginRoleFields();
         };
 
         window.closeLoginModal = function() {
             const modal = document.getElementById('loginModal');
             if (modal) modal.classList.add('hidden');
-        };
-
-        window.toggleLoginRoleFields = function() {
-            const roleEl = document.querySelector('input[name="loginRole"]:checked');
-            const pFields = document.getElementById('loginPetugasFields');
-            if (!roleEl || !pFields) return;
-
-            if (roleEl.value === 'admin') {
-                pFields.classList.add('hidden');
-            } else {
-                pFields.classList.remove('hidden');
-            }
         };
 
         window.populateLoginWilayahDropdowns = function() {
@@ -1213,52 +1223,17 @@
             dSel.innerHTML = html;
         };
 
-        window.handleLoginSubmit = function(event) {
-            event.preventDefault();
-            const role = document.querySelector('input[name="loginRole"]:checked')?.value;
-            const password = document.getElementById('loginPassword')?.value;
-
-            if (role === 'admin') {
-                if (password !== 'admin2026' && password !== 'admin') {
-                    window.showToast("Password Admin Salah! Default: admin2026", "error");
-                    return;
-                }
-                window.currentUser = {
-                    role: 'admin',
-                    name: 'ADMIN KABUPATEN',
-                    kecamatan: '',
-                    desa: ''
-                };
-                window.showToast("Berhasil Login Sebagai Admin Kabupaten!", "success");
-            } else {
-                const kec = document.getElementById('loginKecamatan')?.value.trim().toUpperCase();
-                const desa = document.getElementById('loginDesa')?.value.trim().toUpperCase();
-                const nama = (document.getElementById('loginNamaPetugas')?.value.trim() || 'PETUGAS DESA').toUpperCase();
-
-                if (!kec || !desa) {
-                    window.showToast("Harap pilih Kecamatan dan Desa/Kelurahan!", "error");
-                    return;
-                }
-                if (password !== 'desa2026' && password !== 'desa' && password !== '123456') {
-                    window.showToast("Password Petugas Salah! Default: desa2026", "error");
-                    return;
-                }
-
-                window.currentUser = {
-                    role: 'petugas',
-                    name: nama,
-                    kecamatan: kec,
-                    desa: desa
-                };
-                window.showToast(`Berhasil Login Sebagai Petugas Desa ${desa}`, "success");
+        window.logoutUser = async function() {
+            try {
+                const { signOut } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+                await signOut(window.authInstance);
+            } catch(e) {
+                console.warn(e);
             }
 
-            window.closeLoginModal();
-            window.initAuthSession();
-        };
-
-        window.logoutUser = function() {
             window.currentUser = null;
+            const emailInput = document.getElementById('loginEmail');
+            if (emailInput) emailInput.value = '';
             const pwdInput = document.getElementById('loginPassword');
             if (pwdInput) pwdInput.value = '';
             const petugasInput = document.getElementById('loginNamaPetugas');
@@ -2445,7 +2420,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
         const firebaseConfig = {
@@ -2462,10 +2437,63 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
+        window.authInstance = auth;
 
-        signInAnonymously(auth).catch(err => {
-            console.warn("Auth info:", err);
+        // Firebase Auth State Listener
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const email = user.email ? user.email.toLowerCase() : '';
+                if (email.includes('admin') || window.currentLoginRole === 'admin') {
+                    window.currentUser = {
+                        role: 'admin',
+                        name: 'ADMIN KABUPATEN',
+                        kecamatan: '',
+                        desa: ''
+                    };
+                } else {
+                    const kec = document.getElementById('loginKecamatan')?.value.trim().toUpperCase() || '';
+                    const desa = document.getElementById('loginDesa')?.value.trim().toUpperCase() || '';
+                    const nama = (document.getElementById('loginNamaPetugas')?.value.trim() || email.split('@')[0]).toUpperCase();
+
+                    window.currentUser = {
+                        role: 'petugas',
+                        name: nama,
+                        kecamatan: kec,
+                        desa: desa
+                    };
+                }
+                window.initAuthSession();
+            } else {
+                window.currentUser = null;
+                window.initAuthSession();
+            }
         });
+
+        window.handleLoginSubmit = async function(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail')?.value.trim();
+            const password = document.getElementById('loginPassword')?.value;
+
+            if (window.currentLoginRole === 'petugas') {
+                const kec = document.getElementById('loginKecamatan')?.value.trim();
+                const desa = document.getElementById('loginDesa')?.value.trim();
+                if (!kec || !desa) {
+                    window.showToast("SILAKAN PILIH KECAMATAN DAN DESA / KELURAHAN TUGAS TERLEBIH DAHULU!", "error");
+                    if (!kec) document.getElementById('loginKecamatan')?.focus();
+                    else document.getElementById('loginDesa')?.focus();
+                    return;
+                }
+            }
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                window.showToast("Berhasil masuk sistem!", "success");
+                window.closeLoginModal();
+            } catch (err) {
+                console.error("Login Auth Error:", err);
+                window.showToast("Gagal Login: " + (err.message || "Periksa kembali email dan password Anda."), "error");
+            }
+        };
 
         ['pendaftaran', 'pemutakhiran', 'penghapusan'].forEach(cat => {
             const catRef = ref(db, `pbb_2026/${cat}`);
