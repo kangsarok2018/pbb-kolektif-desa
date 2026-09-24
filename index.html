@@ -645,7 +645,7 @@
                             <option value="">-- SEMUA KECAMATAN --</option>
                         </select>
                         <input type="text" id="searchLaporan" oninput="renderLaporanTable()" placeholder="Cari Nama Desa / Kec..." class="px-3 py-1.5 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 w-40 sm:w-52 uppercase">
-                        <button onclick="openMasterWilayahModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+                        <button id="btnMasterWilayahAction" onclick="openMasterWilayahModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
                             <i class="fa-solid fa-list-check"></i> Master Desa
                         </button>
                         <button onclick="exportToExcel('laporan')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
@@ -1380,6 +1380,11 @@
         };
 
         window.switchTab = function(tabName) {
+            if (tabName === 'laporan' && window.currentUser && window.currentUser.role !== 'admin') {
+                window.showToast("Akses Ditolak: Tab Rekap Laporan hanya untuk Admin Kabupaten.", "error");
+                return;
+            }
+
             window.activeTab = tabName;
             
             const tPend = document.getElementById('tabPendaftaranContent');
@@ -1422,6 +1427,10 @@
         };
 
         window.openMasterWilayahModal = function() {
+            if (window.currentUser && window.currentUser.role !== 'admin') {
+                window.showToast("Akses Ditolak: Hanya Admin Kabupaten yang dapat mengubah Master Desa.", "error");
+                return;
+            }
             const modal = document.getElementById('masterWilayahModal');
             if (!modal) return;
             modal.classList.remove('hidden');
