@@ -68,6 +68,9 @@
                 </div>
             </div>
             <div class="flex items-center space-x-2">
+                <button id="btnManajemenPetugas" onclick="openManajemenPetugasModal()" class="hidden bg-amber-400 hover:bg-amber-300 text-indigo-950 px-3 py-2 rounded-lg text-xs font-bold shadow items-center gap-2" title="Kelola akun petugas desa">
+                    <i class="fa-solid fa-users-gear"></i> Kelola Petugas
+                </button>
                 <div id="userProfileBadge" class="hidden bg-indigo-800 border border-indigo-700 rounded-lg px-3 py-1 flex items-center gap-2">
                     <div class="text-right">
                         <p id="userProfileName" class="text-xs font-bold text-amber-300 uppercase leading-none">Petugas Desa</p>
@@ -732,6 +735,92 @@
         </div>
     </div>
 
+    <!-- Manajemen Petugas Modal -->
+    <div id="manajemenPetugasModal" class="fixed inset-0 z-[110] hidden bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full p-6 space-y-5 border border-slate-200 max-h-[92vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <div>
+                    <h3 class="text-base font-bold text-indigo-950 uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-users-gear text-indigo-600"></i> Manajemen Petugas Desa
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">Admin dapat membuat akun petugas dan menetapkan Kecamatan + Desa tugas.</p>
+                </div>
+                <button onclick="closeManajemenPetugasModal()" class="text-slate-400 hover:text-slate-600 text-lg p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                <div class="lg:col-span-1 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-xs font-bold text-slate-800 uppercase">Tambah Petugas</h4>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full font-bold">ADMIN</span>
+                    </div>
+                    <form id="formManajemenPetugas" onsubmit="submitManajemenPetugas(event)" class="space-y-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">EMAIL *</label>
+                            <input id="petugasManageEmail" type="email" required placeholder="petugas@desa.id" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">PASSWORD *</label>
+                            <input id="petugasManagePassword" type="password" required minlength="6" placeholder="Minimal 6 karakter" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">NAMA PETUGAS *</label>
+                            <input id="petugasManageName" type="text" required placeholder="BUDI SANTO" oninput="this.value=this.value.toUpperCase()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg uppercase focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">KECAMATAN *</label>
+                            <select id="petugasManageKecamatan" required onchange="handlePetugasManageKecamatanChange()" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg uppercase bg-white font-semibold focus:ring-2 focus:ring-indigo-500">
+                                <option value="">-- PILIH KECAMATAN --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">DESA / KELURAHAN *</label>
+                            <select id="petugasManageDesa" required class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg uppercase bg-white font-semibold focus:ring-2 focus:ring-indigo-500">
+                                <option value="">-- PILIH KECAMATAN DAHULU --</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-900 hover:bg-indigo-950 text-white py-2.5 rounded-lg text-xs font-bold shadow flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-user-plus"></i> BUAT AKUN PETUGAS
+                        </button>
+                    </form>
+                    <div class="mt-3 p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-[10px] text-amber-800 leading-relaxed">
+                        <strong>Catatan:</strong> pembuatan akun dilakukan melalui Firebase Authentication. Password tidak disimpan di Realtime Database.
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-800 uppercase">Daftar Petugas</h4>
+                            <p id="petugasManageCount" class="text-[10px] text-slate-500 mt-1">Memuat data...</p>
+                        </div>
+                        <button onclick="loadManajemenPetugas()" class="px-3 py-2 text-[11px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg flex items-center gap-1.5">
+                            <i class="fa-solid fa-rotate"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="border border-slate-200 rounded-xl overflow-auto max-h-[55vh]">
+                        <table class="w-full text-xs">
+                            <thead class="bg-slate-100 sticky top-0 z-10">
+                                <tr>
+                                    <th class="text-left p-2.5 font-bold text-slate-600">Nama / Email</th>
+                                    <th class="text-left p-2.5 font-bold text-slate-600">Kecamatan</th>
+                                    <th class="text-left p-2.5 font-bold text-slate-600">Desa</th>
+                                    <th class="text-center p-2.5 font-bold text-slate-600">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="petugasManageTableBody">
+                                <tr><td colspan="4" class="p-6 text-center text-slate-400">Belum ada data.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2">Penghapusan akun Authentication tidak dilakukan dari browser ini. Jika akun perlu dinonaktifkan permanen, gunakan Firebase Console atau Admin SDK.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Login Modal -->
     <div id="loginModal" class="fixed inset-0 z-[100] hidden bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 no-print">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-5 border border-slate-200">
@@ -1142,6 +1231,9 @@
                 const pScope = document.getElementById('userProfileScope');
 
                 if (window.currentUser.role === 'admin') {
+                    const manageBtn = document.getElementById('btnManajemenPetugas');
+                    if (manageBtn) manageBtn.classList.remove('hidden');
+                    if (manageBtn) manageBtn.classList.add('flex');
                     if (pName) pName.innerText = "ADMIN KABUPATEN";
                     if (pScope) pScope.innerText = "AKSES PENUH KABUPATEN MERANGIN";
                     if (kecSelect) {
@@ -1176,6 +1268,9 @@
                 window.updateHeaderMetadataState();
                 window.renderCurrentTabTable();
             } else {
+                const manageBtn = document.getElementById('btnManajemenPetugas');
+                if (manageBtn) manageBtn.classList.add('hidden');
+                if (manageBtn) manageBtn.classList.remove('flex');
                 if (welcomeDash) welcomeDash.classList.remove('hidden');
                 if (badge) badge.classList.add('hidden');
                 if (kecSelect) kecSelect.disabled = false;
@@ -1229,6 +1324,178 @@
                 html += `<option value="${window.escapeHtml(d)}">${window.escapeHtml(d)}</option>`;
             });
             dSel.innerHTML = html;
+        };
+
+        window.openManajemenPetugasModal = function() {
+            if (!window.currentUser || window.currentUser.role !== 'admin') {
+                window.showToast("Akses Ditolak: Hanya Admin Kabupaten.", "error");
+                return;
+            }
+            const modal = document.getElementById('manajemenPetugasModal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            populatePetugasManageKecamatan();
+            loadManajemenPetugas();
+        };
+
+        window.closeManajemenPetugasModal = function() {
+            const modal = document.getElementById('manajemenPetugasModal');
+            if (modal) modal.classList.add('hidden');
+        };
+
+        window.populatePetugasManageKecamatan = function() {
+            const sel = document.getElementById('petugasManageKecamatan');
+            if (!sel) return;
+            const kecs = [...new Set((window.masterWilayahList || []).map(x => String(x.kecamatan || '').toUpperCase()).filter(Boolean))].sort();
+            sel.innerHTML = '<option value="">-- PILIH KECAMATAN --</option>' + kecs.map(k => `<option value="${window.escapeHtml(k)}">KEC. ${window.escapeHtml(k)}</option>`).join('');
+            const desaSel = document.getElementById('petugasManageDesa');
+            if (desaSel) desaSel.innerHTML = '<option value="">-- PILIH KECAMATAN DAHULU --</option>';
+        };
+
+        window.handlePetugasManageKecamatanChange = function() {
+            const k = normalize(String(document.getElementById('petugasManageKecamatan')?.value || ''));
+            const dSel = document.getElementById('petugasManageDesa');
+            if (!dSel) return;
+            if (!k) {
+                dSel.innerHTML = '<option value="">-- PILIH KECAMATAN DAHULU --</option>';
+                return;
+            }
+            const desas = [...new Set((window.masterWilayahList || []).filter(x => normalize(x.kecamatan) === k).map(x => normalize(x.desa)).filter(Boolean))].sort();
+            dSel.innerHTML = '<option value="">-- PILIH DESA / KELURAHAN --</option>' + desas.map(d => `<option value="${window.escapeHtml(d)}">${window.escapeHtml(d)}</option>`).join('');
+        };
+
+        function renderManajemenPetugas(users) {
+            const body = document.getElementById('petugasManageTableBody');
+            const count = document.getElementById('petugasManageCount');
+            if (!body) return;
+            const rows = Object.entries(users || {})
+                .filter(([,u]) => normalizeRole(u?.role) === 'petugas')
+                .sort((a,b) => String(a[1]?.name || a[1]?.email || a[0]).localeCompare(String(b[1]?.name || b[1]?.email || b[0])));
+            if (count) count.textContent = `${rows.length} akun petugas terdaftar`;
+            if (!rows.length) {
+                body.innerHTML = '<tr><td colspan="4" class="p-6 text-center text-slate-400">Belum ada akun petugas.</td></tr>';
+                return;
+            }
+            body.innerHTML = rows.map(([uid,u]) => `
+                <tr class="border-t border-slate-100 hover:bg-slate-50">
+                    <td class="p-2.5 align-top"><div class="font-bold text-slate-800 uppercase">${window.escapeHtml(u?.name || '-')}</div><div class="text-[10px] text-slate-500 font-mono break-all">${window.escapeHtml(u?.email || uid)}</div></td>
+                    <td class="p-2.5 align-top uppercase">${window.escapeHtml(u?.kecamatan || '<BELUM DIATUR>')}</td>
+                    <td class="p-2.5 align-top uppercase">${window.escapeHtml(u?.desa || '<BELUM DIATUR>')}</td>
+                    <td class="p-2.5 align-top text-center"><button onclick="editPetugasRegion('${uid}')" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-[10px]"><i class="fa-solid fa-pen"></i> Wilayah</button></td>
+                </tr>`).join('');
+        }
+
+        window.loadManajemenPetugas = async function() {
+            if (!window.currentUser || window.currentUser.role !== 'admin') return;
+            try {
+                const snap = await window.firebaseGet(window.firebaseRef(window.firebaseDb, 'users'));
+                renderManajemenPetugas(snap.exists() ? (snap.val() || {}) : {});
+            } catch (e) {
+                console.error('Load users:', e);
+                window.showToast('Gagal membaca daftar petugas: ' + (e.message || 'Unknown error'), 'error');
+            }
+        };
+
+        window.editPetugasRegion = async function(uid) {
+            if (!window.currentUser || window.currentUser.role !== 'admin') return;
+            try {
+                const snap = await window.firebaseGet(window.firebaseRef(window.firebaseDb, `users/${uid}`));
+                const u = snap.val() || {};
+                if (normalizeRole(u.role) !== 'petugas') return;
+                const kecs = [...new Set((window.masterWilayahList || []).map(x => normalize(x.kecamatan)).filter(Boolean))].sort();
+                const currentK = normalize(u.kecamatan);
+                const currentD = normalize(u.desa);
+                const choiceK = prompt('Kecamatan baru:\n\n' + kecs.join('\n'), currentK);
+                if (choiceK === null) return;
+                const k = normalize(choiceK);
+                const desas = [...new Set((window.masterWilayahList || []).filter(x => normalize(x.kecamatan) === k).map(x => normalize(x.desa)).filter(Boolean))].sort();
+                if (!desas.length) {
+                    window.showToast('Kecamatan tidak ditemukan pada Master Wilayah.', 'error');
+                    return;
+                }
+                const choiceD = prompt('Desa/Kelurahan baru:\n\n' + desas.join('\n'), currentD);
+                if (choiceD === null) return;
+                const d = normalize(choiceD);
+                if (!desas.includes(d)) {
+                    window.showToast('Desa tidak ditemukan pada Kecamatan tersebut.', 'error');
+                    return;
+                }
+                await window.firebaseUpdate(window.firebaseRef(window.firebaseDb, `users/${uid}`), { kecamatan: k, desa: d });
+                window.showToast('Wilayah petugas berhasil diperbarui.', 'success');
+                await window.loadManajemenPetugas();
+            } catch (e) {
+                console.error('Update petugas region:', e);
+                window.showToast('Gagal memperbarui wilayah: ' + (e.message || 'Unknown error'), 'error');
+            }
+        };
+
+        window.submitManajemenPetugas = async function(event) {
+            event.preventDefault();
+            if (!window.currentUser || window.currentUser.role !== 'admin') {
+                window.showToast('Akses ditolak. Hanya admin.', 'error');
+                return;
+            }
+            const email = String(document.getElementById('petugasManageEmail')?.value || '').trim().toLowerCase();
+            const password = String(document.getElementById('petugasManagePassword')?.value || '');
+            const name = normalize(document.getElementById('petugasManageName')?.value || '');
+            const kec = normalize(document.getElementById('petugasManageKecamatan')?.value || '');
+            const desa = normalize(document.getElementById('petugasManageDesa')?.value || '');
+            if (!email || password.length < 6 || !name || !kec || !desa) {
+                window.showToast('Lengkapi email, password minimal 6 karakter, nama, Kecamatan, dan Desa.', 'error');
+                return;
+            }
+            const validRegion = (window.masterWilayahList || []).some(x => normalize(x.kecamatan) === kec && normalize(x.desa) === desa);
+            if (!validRegion) {
+                window.showToast('Kombinasi Kecamatan + Desa tidak ada di Master Wilayah.', 'error');
+                return;
+            }
+            const btn = event.submitter;
+            if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Membuat akun...'; }
+            try {
+                const existing = await window.firebaseGet(window.firebaseRef(window.firebaseDb, 'users'));
+                const users = existing.exists() ? existing.val() || {} : {};
+                if (Object.values(users).some(u => String(u?.email || '').toLowerCase() === email)) {
+                    throw new Error('Email sudah tercatat pada profil user.');
+                }
+
+                const secondaryApp = window.firebaseInitializeApp(window.firebaseConfigPublic, `petugas-${Date.now()}`);
+                const secondaryAuth = window.firebaseGetAuth(secondaryApp);
+                let cred;
+                try {
+                    cred = await window.firebaseCreateUserWithEmailAndPassword(secondaryAuth, email, password);
+                    await window.firebaseSet(window.firebaseRef(window.firebaseDb, `users/${cred.user.uid}`), {
+                        role: 'petugas',
+                        email,
+                        name,
+                        kecamatan: kec,
+                        desa,
+                        createdAt: new Date().toISOString(),
+                        createdByUid: window.currentUser.uid
+                    });
+                } catch (e) {
+                    if (cred?.user) {
+                        try { await window.firebaseDeleteUser(cred.user); } catch (_) {}
+                    }
+                    throw e;
+                } finally {
+                    try { await window.firebaseSignOut(secondaryAuth); } catch (_) {}
+                    try { await window.firebaseDeleteApp(secondaryApp); } catch (_) {}
+                }
+
+                window.showToast('Akun petugas berhasil dibuat dan wilayah sudah dikonfigurasi.', 'success');
+                document.getElementById('formManajemenPetugas')?.reset();
+                populatePetugasManageKecamatan();
+                await window.loadManajemenPetugas();
+            } catch (e) {
+                console.error('Create petugas:', e);
+                let msg = e.message || 'Unknown error';
+                if (e.code === 'auth/email-already-in-use') msg = 'Email sudah digunakan oleh akun Firebase Authentication.';
+                else if (e.code === 'auth/invalid-email') msg = 'Format email tidak valid.';
+                else if (e.code === 'auth/weak-password') msg = 'Password terlalu lemah. Gunakan minimal 6 karakter.';
+                window.showToast('Gagal membuat akun: ' + msg, 'error');
+            } finally {
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> BUAT AKUN PETUGAS'; }
+            }
         };
 
         window.logoutUser = async function() {
@@ -1331,6 +1598,9 @@
         window.updateTahunHeader = function() {
             const thn = document.getElementById('metaTahun')?.value || '2026';
             window.safeSetText('headerTahunDisplay', `TAHUN ${thn}`);
+            if (window.currentUser && typeof window.refreshFirebaseYear === 'function' && /^\d{4}$/.test(String(thn).trim())) {
+                window.refreshFirebaseYear(String(thn).trim());
+            }
         };
 
         window.safeSetText = function(id, text) {
@@ -2373,201 +2643,785 @@
     </script>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+    import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword, deleteUser } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getDatabase, ref, set, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
-        // Konfigurasi Project Firebase Baru (projectpbb-ed58e)
-        const firebaseConfig = {
-            apiKey: "AIzaSyAZmImhnXnOBqeUG35WkF2qWp0u9aKgZmo",
-            authDomain: "projectpbb-ed58e.firebaseapp.com",
-            databaseURL: "https://projectpbb-ed58e-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "projectpbb-ed58e",
-            storageBucket: "projectpbb-ed58e.firebasestorage.app",
-            messagingSenderId: "543889051250",
-            appId: "1:543889051250:web:14f16a6ab76027c93ffceb",
-            measurementId: "G-9YZMYPJ37X"
-        };
+    /* =========================================================
+       FIREBASE CONFIGURATION
+       ========================================================= */
+    const firebaseConfig = {
+        apiKey: "AIzaSyAZmImhnXnOBqeUG35WkF2qWp0u9aKgZmo",
+        authDomain: "projectpbb-ed58e.firebaseapp.com",
+        databaseURL: "https://projectpbb-ed58e-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "projectpbb-ed58e",
+        storageBucket: "projectpbb-ed58e.firebasestorage.app",
+        messagingSenderId: "543889051250",
+        appId: "1:543889051250:web:14f16a6ab76027c93ffceb",
+        measurementId: "G-9YZMYPJ37X"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getDatabase(app);
-        let currentUserId = 'anonymous_user';
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
 
-        window.authInstance = auth;
+    // Bridge API Firebase untuk fungsi UI yang berada di script non-module.
+    // Tanpa bridge ini, fungsi tersebut tidak dapat mengakses ref/get/set/update
+    // karena import ES module memiliki scope sendiri.
+    window.firebaseDb = db;
+    window.firebaseConfigPublic = firebaseConfig;
+    window.firebaseGet = get;
+    window.firebaseRef = ref;
+    window.firebaseSet = set;
+    window.firebaseUpdate = update;
+    window.firebaseRemove = remove;
+    window.firebaseInitializeApp = initializeApp;
+    window.firebaseGetAuth = getAuth;
+    window.firebaseCreateUserWithEmailAndPassword = createUserWithEmailAndPassword;
+    window.firebaseDeleteUser = deleteUser;
+    window.firebaseDeleteApp = deleteApp;
+    window.firebaseSignOut = signOut;
 
-        // Firebase Auth Implementation (Dengan Validasi Silang Role dari Realtime Database)
-        window.triggerFirebaseAuth = async (email, pwd, role, kec, desa, nama) => {
+    window.authInstance = auth;
+
+    /*
+     * Struktur database baru:
+     *
+     * pbb/
+     *   2025/
+     *     pendaftaran/KECAMATAN/DESA/
+     *     pemutakhiran/KECAMATAN/DESA/
+     *     penghapusan/KECAMATAN/DESA/
+     *   2026/
+     *     ...
+     *
+     * Master wilayah tetap di lokasi lama agar kompatibel dengan
+     * data master yang sudah ada:
+     * pbb_2026/master_wilayah
+     *
+     * PENTING:
+     * Keamanan sebenarnya tetap harus ditegakkan melalui Firebase
+     * Realtime Database Rules. Pemeriksaan di browser hanya lapisan
+     * validasi tambahan dan bukan pengganti Rules.
+     */
+
+    const VALID_CATEGORIES = [
+        "pendaftaran",
+        "pemutakhiran",
+        "penghapusan"
+    ];
+
+    const MASTER_WILAYAH_PATH = "pbb_2026/master_wilayah";
+
+    let currentUserId = null;
+    let activeYear = null;
+    const unsubscribeListeners = {};
+
+
+    /* =========================================================
+       HELPER
+       ========================================================= */
+
+    function normalize(value) {
+        return String(value ?? "")
+            .trim()
+            .toUpperCase();
+    }
+
+    function normalizeRole(value) {
+        return normalize(value).toLowerCase();
+    }
+
+    // Expose helpers to the non-module UI script above.
+    // Management Petugas uses inline onchange/onclick handlers.
+    window.normalize = normalize;
+    window.normalizeRole = normalizeRole;
+
+    function isValidCategory(category) {
+        return VALID_CATEGORIES.includes(category);
+    }
+
+    function validYear(year) {
+        return /^\d{4}$/.test(String(year ?? "").trim());
+    }
+
+    function getLoggedUser() {
+        return window.currentUser || null;
+    }
+
+    function isAdmin() {
+        return getLoggedUser()?.role === "admin";
+    }
+
+    function isPetugas() {
+        return getLoggedUser()?.role === "petugas";
+    }
+
+    function toast(message, type = "info") {
+        if (typeof window.showToast === "function") {
+            window.showToast(message, type);
+        } else {
+            console.log(message);
+        }
+    }
+
+    function getYearFromHeader() {
+        const value = document.getElementById("metaTahun")?.value?.trim();
+        return value || "2026";
+    }
+
+    function getDataPath(year, category) {
+        if (!validYear(year)) {
+            throw new Error("Tahun pajak harus berupa 4 digit.");
+        }
+        if (!isValidCategory(category)) {
+            throw new Error("Kategori data tidak valid.");
+        }
+        return `pbb/${year}/${category}`;
+    }
+
+    /*
+     * Jalur data region:
+     * pbb/{tahun}/{kategori}/{KECAMATAN}/{DESA}
+     *
+     * Admin tetap dapat membaca/menulis seluruh kategori.
+     * Petugas hanya pernah meminta path wilayah miliknya.
+     */
+    function getRegionDataPath(year, category, kecamatan, desa) {
+        if (!validYear(year)) {
+            throw new Error("Tahun pajak harus berupa 4 digit.");
+        }
+        if (!isValidCategory(category)) {
+            throw new Error("Kategori data tidak valid.");
+        }
+
+        const kec = normalize(kecamatan);
+        const des = normalize(desa);
+        if (!kec || !des) {
+            throw new Error("Kecamatan dan Desa wajib diisi.");
+        }
+
+        return `${getDataPath(year, category)}/${kec}/${des}`;
+    }
+
+    function getReadDataPath(year, category) {
+        const user = getLoggedUser();
+        if (!user) throw new Error("Sesi login tidak ditemukan.");
+
+        if (isAdmin()) return getDataPath(year, category);
+        if (isPetugas()) return getRegionDataPath(year, category, user.kecamatan, user.desa);
+
+        throw new Error("Role tidak memiliki akses baca.");
+    }
+
+    function canAccessRegion(kecamatan, desa) {
+        const user = getLoggedUser();
+        if (!user) return false;
+
+        if (user.role === "admin") return true;
+        if (user.role !== "petugas") return false;
+
+        return (
+            normalize(user.kecamatan) === normalize(kecamatan) &&
+            normalize(user.desa) === normalize(desa)
+        );
+    }
+
+    function canEditRecord(record) {
+        if (!record) return false;
+        if (isAdmin()) return true;
+        return isPetugas() && canAccessRegion(record.kecamatan, record.desa);
+    }
+
+    function clearListeners() {
+        Object.keys(unsubscribeListeners).forEach(category => {
             try {
-                const userCred = await signInWithEmailAndPassword(auth, email, pwd);
-                currentUserId = userCred.user.uid;
-                
-                // VALIDASI ROLE DARI REALTIME DATABASE
-                const userRef = ref(db, `users/${currentUserId}`);
-                const snapshot = await get(userRef);
-                
-                if (snapshot.exists()) {
-                    const userData = snapshot.val();
-                    const dbRole = userData.role;
-                    
-                    // Cek jika role di tab yang diklik TIDAK SAMA dengan role di database
-                    if (dbRole !== role) {
-                        await signOut(auth); // Keluarkan user secara paksa
-                        window.showToast(`Akses Ditolak: Akun Anda terdaftar sebagai ${dbRole.toUpperCase()}, bukan ${role.toUpperCase()}!`, "error");
-                        return; // Hentikan proses login
+                if (typeof unsubscribeListeners[category] === "function") {
+                    unsubscribeListeners[category]();
+                }
+            } catch (e) {
+                console.warn("Gagal melepas listener", category, e);
+            }
+            delete unsubscribeListeners[category];
+        });
+    }
+
+
+    /* =========================================================
+       LOAD DATA SESUAI TAHUN AKTIF
+       ========================================================= */
+
+    function startRealtimeListeners(year) {
+        if (!getLoggedUser()) return;
+        if (!validYear(year)) return;
+
+        if (activeYear === year && Object.keys(unsubscribeListeners).length === VALID_CATEGORIES.length) {
+            return;
+        }
+
+        clearListeners();
+        activeYear = year;
+
+        VALID_CATEGORIES.forEach(category => {
+            let dataRef;
+            try {
+                dataRef = ref(db, getReadDataPath(year, category));
+            } catch (e) {
+                console.error(`Path baca ${category} tidak valid:`, e);
+                window.recordsData[category] = [];
+                return;
+            }
+
+            unsubscribeListeners[category] = onValue(
+                dataRef,
+                snapshot => {
+                    const value = snapshot.val();
+
+                    /*
+                     * Admin membaca: /kategori/{kecamatan}/{desa}/{id}
+                     * Petugas membaca: /kategori/{kecamatan}/{desa}/{id}
+                     * sehingga keduanya perlu diratakan kembali untuk
+                     * format recordsData yang dipakai UI lama.
+                     */
+                    if (!value) {
+                        window.recordsData[category] = [];
+                    } else if (isAdmin()) {
+                        const flattened = [];
+                        Object.keys(value).forEach(kec => {
+                            const desaMap = value[kec] || {};
+                            Object.keys(desaMap).forEach(desa => {
+                                const records = desaMap[desa] || {};
+                                Object.keys(records).forEach(id => {
+                                    flattened.push({
+                                        id,
+                                        ...records[id]
+                                    });
+                                });
+                            });
+                        });
+                        window.recordsData[category] = flattened;
+                    } else {
+                        window.recordsData[category] = Object.keys(value).map(id => ({
+                            id,
+                            ...value[id]
+                        }));
                     }
-                } else {
-                    // Jika data role tidak ditemukan di node users
+
+                    if (typeof window.renderCurrentTabTable === "function") {
+                        window.renderCurrentTabTable();
+                    }
+                },
+                error => {
+                    console.error(`Realtime listener ${category}:`, error);
+                    toast(`Gagal membaca data ${category}.`, "error");
+                }
+            );
+        });
+    }
+
+    window.refreshFirebaseYear = function(year = getYearFromHeader()) {
+        if (!getLoggedUser()) return;
+        startRealtimeListeners(String(year).trim());
+    };
+
+
+    /* =========================================================
+       LOGIN FIREBASE + VALIDASI PROFILE
+       ========================================================= */
+
+    window.triggerFirebaseAuth = async (email, pwd, role, kec, desa, nama) => {
+        try {
+            email = String(email || "").trim();
+            role = normalizeRole(role);
+            kec = normalize(kec);
+            desa = normalize(desa);
+            nama = normalize(nama);
+
+            if (!email || !pwd) {
+                toast("Email dan password wajib diisi.", "error");
+                return;
+            }
+
+            if (!['admin', 'petugas'].includes(role)) {
+                toast("Role login tidak valid.", "error");
+                return;
+            }
+
+            const userCred = await signInWithEmailAndPassword(auth, email, pwd);
+            currentUserId = userCred.user.uid;
+
+            const userSnapshot = await get(ref(db, `users/${currentUserId}`));
+
+            if (!userSnapshot.exists()) {
+                await signOut(auth);
+                currentUserId = null;
+                toast("Akses ditolak: profil user belum dikonfigurasi di database.", "error");
+                return;
+            }
+
+            const userData = userSnapshot.val() || {};
+            const dbRole = normalizeRole(userData.role);
+
+            if (dbRole !== role) {
+                await signOut(auth);
+                currentUserId = null;
+                toast(`Akses ditolak: akun ini terdaftar sebagai ${dbRole.toUpperCase()}.`, "error");
+                return;
+            }
+
+            let finalKecamatan = "";
+            let finalDesa = "";
+            let finalName = "";
+
+            if (dbRole === "petugas") {
+                finalKecamatan = normalize(userData.kecamatan);
+                finalDesa = normalize(userData.desa);
+                finalName = normalize(userData.name || nama);
+
+                if (!finalKecamatan || !finalDesa) {
                     await signOut(auth);
-                    window.showToast("Akses Ditolak: Role akun Anda tidak dikonfigurasi di database.", "error");
+                    currentUserId = null;
+                    toast("Akses ditolak: wilayah petugas belum dikonfigurasi.", "error");
                     return;
                 }
 
-                window.currentUser = {
-                    uid: currentUserId,
-                    email: userCred.user.email,
-                    role: role,
-                    kecamatan: role === 'admin' ? '' : kec,
-                    desa: role === 'admin' ? '' : desa,
-                    name: role === 'admin' ? 'ADMIN KABUPATEN' : nama.toUpperCase()
-                };
-                
-                window.closeLoginModal();
-                window.showToast("Berhasil Login ke Sistem!", "success");
-                window.initAuthSession();
-            } catch(e) {
-                window.showToast("Gagal masuk! Cek kembali email dan password.", "error");
-                console.error("Auth error:", e);
+                if (kec !== finalKecamatan || desa !== finalDesa) {
+                    await signOut(auth);
+                    currentUserId = null;
+                    toast("Wilayah login tidak sesuai dengan wilayah akun petugas.", "error");
+                    return;
+                }
+            } else {
+                finalName = "ADMIN KABUPATEN";
             }
-        };
 
-        window.triggerFirebaseSignOut = async () => {
-            await signOut(auth);
-            currentUserId = 'anonymous_user';
-        };
-
-        // Real-time Listeners
-        ['pendaftaran', 'pemutakhiran', 'penghapusan'].forEach(cat => {
-            onValue(ref(db, `pbb_2026/${cat}`), (snap) => {
-                const val = snap.val();
-                window.recordsData[cat] = val ? Object.keys(val).map(k => ({id: k, ...val[k]})) : [];
-                window.renderCurrentTabTable();
-            });
-        });
-
-        onValue(ref(db, 'pbb_2026/master_wilayah'), (snap) => {
-            const val = snap.val();
-            if (val && Array.isArray(val) && val.length > 0) {
-                window.masterWilayahList = val;
-                if(window.populateLoginWilayahDropdowns) window.populateLoginWilayahDropdowns();
-                window.renderCurrentTabTable();
-            }
-        });
-
-        window.syncMasterWilayahToFirebase = (list) => {
-            set(ref(db, 'pbb_2026/master_wilayah'), list)
-                .catch(e => window.showToast("Gagal sinkronisasi master wilayah: " + e.message, "error"));
-        };
-
-        window.triggerFirebaseDelete = async (cat, id) => {
-            try {
-                await remove(ref(db, `pbb_2026/${cat}/${id}`));
-                window.showToast("Data berhasil dihapus dari database", "success");
-            } catch(e) { window.showToast("Gagal menghapus data: " + e.message, "error"); }
-        };
-
-        window.triggerFirebaseSubmit = async (cat) => {
-            const tahun = document.getElementById('metaTahun')?.value.trim();
-            const kec = document.getElementById('metaKecamatan')?.value.trim();
-            const desa = document.getElementById('metaDesa')?.value.trim();
-            
-            if (!tahun || !kec || !desa) return window.showToast("Harap lengkapi Tahun, Kecamatan, dan Desa di header!", "error");
-
-            let recId = document.getElementById(`${cat}RecordId`)?.value;
-            let data = {
-                tahun: tahun, 
-                kecamatan: kec.toUpperCase(), 
-                desa: desa.toUpperCase(),
-                rt: document.getElementById('metaRT')?.value.trim().toUpperCase() || '',
-                suratPengantarUrl: document.getElementById('metaSuratPengantarUrl')?.value || '',
-                updatedAt: new Date().toISOString(),
-                submittedBy: window.currentUser ? window.currentUser.name : 'ANONYMOUS',
-                userId: currentUserId
+            window.currentUser = {
+                uid: currentUserId,
+                email: userCred.user.email,
+                role: dbRole,
+                kecamatan: finalKecamatan,
+                desa: finalDesa,
+                name: finalName
             };
 
-            if (cat === 'pendaftaran') {
-                data.nama = document.getElementById('pendNama').value;
-                data.nik = document.getElementById('pendNik').value;
-                data.alamatWpBase = document.getElementById('pendAlamatWp').value;
-                data.rtWp = document.getElementById('pendRtWp').value;
-                data.rwWp = document.getElementById('pendRwWp').value;
-                data.alamatWp = window.combineAddressWithRtRw(data.alamatWpBase, data.rtWp, data.rwWp);
-                
-                data.letakObjekBase = document.getElementById('pendLetakObjek').value;
-                data.rtObjek = document.getElementById('pendRtObjek').value;
-                data.rwObjek = document.getElementById('pendRwObjek').value;
-                data.letakObjek = window.combineAddressWithRtRw(data.letakObjekBase, data.rtObjek, data.rwObjek);
-                
-                data.luasBumi = document.getElementById('pendLuasBumi').value;
-                data.luasBangunan = document.getElementById('pendLuasBangunan').value;
-                data.thnDbgn = document.getElementById('pendThnDbgn').value;
-                data.thnRenov = document.getElementById('pendThnRenov').value;
-                data.listrik = document.getElementById('pendListrik').value;
-                data.keterangan = document.getElementById('pendKeterangan').value;
-            } else if (cat === 'pemutakhiran') {
-                data.nop = document.getElementById('pemNOP').value;
-                data.namaLama = document.getElementById('pemNamaLama').value;
-                data.nikLama = document.getElementById('pemNikLama').value;
-                data.alamatWpLama = document.getElementById('pemAlamatWpLama').value;
-                data.letakObjekLama = document.getElementById('pemLetakObjekLama').value;
-                data.luasBumiLama = document.getElementById('pemLuasBumiLama').value;
-                data.luasBangunanLama = document.getElementById('pemLuasBangunanLama').value;
-                
-                data.namaBaru = document.getElementById('pemNamaBaru').value;
-                data.nikBaru = document.getElementById('pemNikBaru').value;
-                data.alamatWpBaruBase = document.getElementById('pemAlamatWpBaru').value;
-                data.rtWpBaru = document.getElementById('pemRtWpBaru').value;
-                data.rwWpBaru = document.getElementById('pemRwWpBaru').value;
-                data.alamatWpBaru = window.combineAddressWithRtRw(data.alamatWpBaruBase, data.rtWpBaru, data.rwWpBaru);
-                
-                data.letakObjekBaruBase = document.getElementById('pemLetakObjekBaru').value;
-                data.rtObjekBaru = document.getElementById('pemRtObjekBaru').value;
-                data.rwObjekBaru = document.getElementById('pemRwObjekBaru').value;
-                data.letakObjekBaru = window.combineAddressWithRtRw(data.letakObjekBaruBase, data.rtObjekBaru, data.rwObjekBaru);
-                
-                data.luasBumiBaru = document.getElementById('pemLuasBumiBaru').value;
-                data.luasBangunanBaru = document.getElementById('pemLuasBangunanBaru').value;
-                data.alasan = document.getElementById('pemAlasan').value;
-            } else if (cat === 'penghapusan') {
-                data.nama = document.getElementById('hapusNama').value;
-                data.nop = document.getElementById('hapusNOP').value;
-                data.alamatWpBase = document.getElementById('hapusAlamatWp').value;
-                data.rtWp = document.getElementById('hapusRtWp').value;
-                data.rwWp = document.getElementById('hapusRwWp').value;
-                data.alamatWp = window.combineAddressWithRtRw(data.alamatWpBase, data.rtWp, data.rwWp);
-                
-                data.letakObjekBase = document.getElementById('hapusLetakObjek').value;
-                data.rtObjek = document.getElementById('hapusRtObjek').value;
-                data.rwObjek = document.getElementById('hapusRwObjek').value;
-                data.letakObjek = window.combineAddressWithRtRw(data.letakObjekBase, data.rtObjek, data.rwObjek);
-                
-                data.luasTanah = document.getElementById('hapusLuasTanah').value;
-                data.luasBangunan = document.getElementById('hapusLuasBangunan').value;
-                data.alasan = document.getElementById('hapusAlasan').value;
+            window.closeLoginModal();
+            toast("Berhasil Login ke Sistem!", "success");
+
+            if (typeof window.initAuthSession === "function") {
+                window.initAuthSession();
             }
 
-            try {
-                if (recId) {
-                    await update(ref(db, `pbb_2026/${cat}/${recId}`), data);
-                    window.showToast("Data berhasil diperbarui di server!", "success");
-                } else {
-                    data.createdAt = new Date().toISOString();
-                    await set(push(ref(db, `pbb_2026/${cat}`)), data);
-                    window.showToast("Data usulan baru berhasil disimpan!", "success");
+            const year = getYearFromHeader();
+            startRealtimeListeners(year);
+
+        } catch (error) {
+            console.error("Firebase Auth Error:", error);
+            toast("Gagal masuk! Cek kembali email dan password.", "error");
+        }
+    };
+
+
+    /* =========================================================
+       LOGOUT
+       ========================================================= */
+
+    window.triggerFirebaseSignOut = async () => {
+        try {
+            clearListeners();
+            activeYear = null;
+            currentUserId = null;
+            window.currentUser = null;
+            await signOut(auth);
+        } catch (error) {
+            console.error("Sign out error:", error);
+        }
+    };
+
+
+    /* =========================================================
+       MASTER WILAYAH
+       ========================================================= */
+
+    onValue(
+        ref(db, MASTER_WILAYAH_PATH),
+        snapshot => {
+            const value = snapshot.val();
+
+            if (Array.isArray(value)) {
+                window.masterWilayahList = value;
+
+                if (typeof window.populateLoginWilayahDropdowns === "function") {
+                    window.populateLoginWilayahDropdowns();
                 }
-                window.resetForm(cat);
-            } catch(e) { window.showToast("Gagal menyimpan data: " + e.message, "error"); }
+
+                if (typeof window.initHeaderWilayahDropdowns === "function") {
+                    window.initHeaderWilayahDropdowns();
+                }
+
+                if (typeof window.renderCurrentTabTable === "function") {
+                    window.renderCurrentTabTable();
+                }
+            }
+        },
+        error => {
+            console.error("Master wilayah listener:", error);
+            // Master default yang sudah ada di browser tetap dipertahankan.
+        }
+    );
+
+
+    /* =========================================================
+       SIMPAN MASTER WILAYAH - ADMIN ONLY
+       ========================================================= */
+
+    window.syncMasterWilayahToFirebase = async list => {
+        try {
+            if (!isAdmin()) {
+                toast("Hanya admin yang dapat mengubah master wilayah.", "error");
+                return false;
+            }
+
+            if (!Array.isArray(list)) {
+                toast("Format master wilayah tidak valid.", "error");
+                return false;
+            }
+
+            const cleanList = list
+                .filter(item => item && item.kecamatan && item.desa)
+                .map(item => ({
+                    kecamatan: normalize(item.kecamatan),
+                    desa: normalize(item.desa)
+                }));
+
+            await set(ref(db, MASTER_WILAYAH_PATH), cleanList);
+            window.masterWilayahList = cleanList;
+            toast("Master wilayah berhasil disimpan.", "success");
+            return true;
+
+        } catch (error) {
+            console.error("Master wilayah error:", error);
+            toast("Gagal menyimpan master wilayah: " + (error.message || "Unknown error"), "error");
+            return false;
+        }
+    };
+
+
+    /* =========================================================
+       DELETE - ADMIN ONLY
+       ========================================================= */
+
+    window.triggerFirebaseDelete = async (category, id) => {
+        try {
+            if (!isAdmin()) {
+                toast("Hanya admin yang dapat menghapus data.", "error");
+                return;
+            }
+
+            if (!isValidCategory(category) || !id) {
+                toast("Data yang akan dihapus tidak valid.", "error");
+                return;
+            }
+
+            const year = getYearFromHeader();
+            let recordRef;
+
+            if (isAdmin()) {
+                const cached = (window.recordsData?.[category] || []).find(item => item.id === id);
+                if (!cached || !cached.kecamatan || !cached.desa) {
+                    toast("Wilayah data tidak ditemukan. Muat ulang data lalu coba lagi.", "error");
+                    return;
+                }
+                recordRef = ref(db, `${getRegionDataPath(year, category, cached.kecamatan, cached.desa)}/${id}`);
+            } else {
+                const user = getLoggedUser();
+                recordRef = ref(db, `${getRegionDataPath(year, category, user.kecamatan, user.desa)}/${id}`);
+            }
+
+            const snapshot = await get(recordRef);
+
+            if (!snapshot.exists()) {
+                toast("Data tidak ditemukan.", "error");
+                return;
+            }
+
+            await remove(recordRef);
+            toast("Data berhasil dihapus dari database.", "success");
+
+        } catch (error) {
+            console.error("Delete error:", error);
+            toast("Gagal menghapus data: " + (error.message || "Unknown error"), "error");
+        }
+    };
+
+
+    /* =========================================================
+       BUILD DATA DARI FORM
+       ========================================================= */
+
+    function getValue(id) {
+        return document.getElementById(id)?.value ?? "";
+    }
+
+    function getTrimmed(id) {
+        return String(getValue(id)).trim();
+    }
+
+    function getUpper(id) {
+        return normalize(getValue(id));
+    }
+
+    function buildRecordData(category) {
+        const user = getLoggedUser();
+        const tahun = getTrimmed("metaTahun");
+        const kecamatan = getUpper("metaKecamatan");
+        const desa = getUpper("metaDesa");
+
+        const data = {
+            tahun,
+            kecamatan,
+            desa,
+            rt: getUpper("metaRT"),
+            suratPengantarUrl: getTrimmed("metaSuratPengantarUrl"),
+            updatedAt: new Date().toISOString(),
+            updatedBy: user?.name || "UNKNOWN",
+            updatedByUid: user?.uid || currentUserId || ""
         };
-    </script>
+
+        if (category === "pendaftaran") {
+            data.nama = getTrimmed("pendNama");
+            data.nik = getTrimmed("pendNik");
+            data.alamatWpBase = getTrimmed("pendAlamatWp");
+            data.rtWp = getTrimmed("pendRtWp");
+            data.rwWp = getTrimmed("pendRwWp");
+            data.alamatWp = window.combineAddressWithRtRw(data.alamatWpBase, data.rtWp, data.rwWp);
+
+            data.letakObjekBase = getTrimmed("pendLetakObjek");
+            data.rtObjek = getTrimmed("pendRtObjek");
+            data.rwObjek = getTrimmed("pendRwObjek");
+            data.letakObjek = window.combineAddressWithRtRw(data.letakObjekBase, data.rtObjek, data.rwObjek);
+
+            data.luasBumi = getTrimmed("pendLuasBumi");
+            data.luasBangunan = getTrimmed("pendLuasBangunan");
+            data.thnDbgn = getTrimmed("pendThnDbgn");
+            data.thnRenov = getTrimmed("pendThnRenov");
+            data.listrik = getTrimmed("pendListrik");
+            data.keterangan = getTrimmed("pendKeterangan");
+        }
+
+        if (category === "pemutakhiran") {
+            data.nop = getTrimmed("pemNOP");
+            data.namaLama = getTrimmed("pemNamaLama");
+            data.nikLama = getTrimmed("pemNikLama");
+            data.alamatWpLama = getTrimmed("pemAlamatWpLama");
+            data.letakObjekLama = getTrimmed("pemLetakObjekLama");
+            data.luasBumiLama = getTrimmed("pemLuasBumiLama");
+            data.luasBangunanLama = getTrimmed("pemLuasBangunanLama");
+
+            data.namaBaru = getTrimmed("pemNamaBaru");
+            data.nikBaru = getTrimmed("pemNikBaru");
+            data.alamatWpBaruBase = getTrimmed("pemAlamatWpBaru");
+            data.rtWpBaru = getTrimmed("pemRtWpBaru");
+            data.rwWpBaru = getTrimmed("pemRwWpBaru");
+            data.alamatWpBaru = window.combineAddressWithRtRw(data.alamatWpBaruBase, data.rtWpBaru, data.rwWpBaru);
+
+            data.letakObjekBaruBase = getTrimmed("pemLetakObjekBaru");
+            data.rtObjekBaru = getTrimmed("pemRtObjekBaru");
+            data.rwObjekBaru = getTrimmed("pemRwObjekBaru");
+            data.letakObjekBaru = window.combineAddressWithRtRw(data.letakObjekBaruBase, data.rtObjekBaru, data.rwObjekBaru);
+
+            data.luasBumiBaru = getTrimmed("pemLuasBumiBaru");
+            data.luasBangunanBaru = getTrimmed("pemLuasBangunanBaru");
+            data.alasan = getTrimmed("pemAlasan");
+        }
+
+        if (category === "penghapusan") {
+            data.nama = getTrimmed("hapusNama");
+            data.nop = getTrimmed("hapusNOP");
+            data.alamatWpBase = getTrimmed("hapusAlamatWp");
+            data.rtWp = getTrimmed("hapusRtWp");
+            data.rwWp = getTrimmed("hapusRwWp");
+            data.alamatWp = window.combineAddressWithRtRw(data.alamatWpBase, data.rtWp, data.rwWp);
+
+            data.letakObjekBase = getTrimmed("hapusLetakObjek");
+            data.rtObjek = getTrimmed("hapusRtObjek");
+            data.rwObjek = getTrimmed("hapusRwObjek");
+            data.letakObjek = window.combineAddressWithRtRw(data.letakObjekBase, data.rtObjek, data.rwObjek);
+
+            data.luasTanah = getTrimmed("hapusLuasTanah");
+            data.luasBangunan = getTrimmed("hapusLuasBangunan");
+            data.alasan = getTrimmed("hapusAlasan");
+        }
+
+        return data;
+    }
+
+
+    function validateRecordData(data) {
+        if (!data.tahun || !validYear(data.tahun)) {
+            return "Tahun pajak harus berupa 4 digit.";
+        }
+
+        if (!data.kecamatan || !data.desa) {
+            return "Kecamatan dan Desa/Kelurahan wajib diisi.";
+        }
+
+        if (!canAccessRegion(data.kecamatan, data.desa)) {
+            return "Anda tidak memiliki akses ke wilayah tersebut.";
+        }
+
+        return null;
+    }
+
+
+    /* =========================================================
+       SUBMIT / INSERT / UPDATE
+       ========================================================= */
+
+    window.triggerFirebaseSubmit = async category => {
+        try {
+            const user = getLoggedUser();
+
+            if (!user) {
+                toast("Sesi login tidak ditemukan. Silakan login kembali.", "error");
+                return;
+            }
+
+            if (!isValidCategory(category)) {
+                toast("Kategori data tidak valid.", "error");
+                return;
+            }
+
+            const data = buildRecordData(category);
+            const validationError = validateRecordData(data);
+
+            if (validationError) {
+                toast(validationError, "error");
+                return;
+            }
+
+            const year = data.tahun;
+            const recordId = getTrimmed(`${category}RecordId`);
+            const basePath = isAdmin()
+                ? getRegionDataPath(year, category, data.kecamatan, data.desa)
+                : getRegionDataPath(year, category, getLoggedUser().kecamatan, getLoggedUser().desa);
+
+            /* =================================================
+               UPDATE DATA LAMA
+               ================================================= */
+            if (recordId) {
+                let recordRef;
+
+                if (isAdmin()) {
+                    /*
+                     * Admin dapat mengedit record dari wilayah mana pun.
+                     * Cari record di cache UI untuk menentukan path asal.
+                     */
+                    const cached = (window.recordsData?.[category] || []).find(item => item.id === recordId);
+                    if (!cached || !cached.kecamatan || !cached.desa) {
+                        toast("Wilayah record tidak ditemukan. Muat ulang data lalu coba lagi.", "error");
+                        return;
+                    }
+                    recordRef = ref(db, `${getRegionDataPath(year, category, cached.kecamatan, cached.desa)}/${recordId}`);
+                } else {
+                    recordRef = ref(db, `${getRegionDataPath(year, category, getLoggedUser().kecamatan, getLoggedUser().desa)}/${recordId}`);
+                }
+                const existingSnapshot = await get(recordRef);
+
+                if (!existingSnapshot.exists()) {
+                    toast("Data yang akan diedit tidak ditemukan.", "error");
+                    return;
+                }
+
+                const existingData = existingSnapshot.val() || {};
+
+                if (!canEditRecord(existingData)) {
+                    toast("Anda tidak memiliki hak untuk mengubah data ini.", "error");
+                    return;
+                }
+
+                /* Petugas tidak boleh memindahkan record ke wilayah lain. */
+                if (isPetugas()) {
+                    if (!canAccessRegion(data.kecamatan, data.desa)) {
+                        toast("Petugas tidak dapat menyimpan data di luar wilayahnya.", "error");
+                        return;
+                    }
+                }
+
+                if (isAdmin()) {
+                    const oldData = existingData;
+                    const oldPath = getRegionDataPath(year, category, oldData.kecamatan, oldData.desa);
+                    const newPath = getRegionDataPath(year, category, data.kecamatan, data.desa);
+
+                    if (oldPath !== newPath) {
+                        /* Pindah wilayah hanya dapat dilakukan ADMIN. */
+                        await set(ref(db, `${newPath}/${recordId}`), data);
+                        await remove(recordRef);
+                    } else {
+                        await update(recordRef, data);
+                    }
+                } else {
+                    await update(recordRef, data);
+                }
+                toast("Data berhasil diperbarui di server!", "success");
+
+            } else {
+                /* =================================================
+                   INSERT DATA BARU
+                   ================================================= */
+                data.createdAt = new Date().toISOString();
+                data.createdBy = user.name || "UNKNOWN";
+                data.createdByUid = user.uid || currentUserId || "";
+
+                await set(push(ref(db, basePath)), data);
+                toast("Data usulan baru berhasil disimpan!", "success");
+            }
+
+            if (typeof window.resetForm === "function") {
+                window.resetForm(category);
+            }
+
+            startRealtimeListeners(year);
+
+        } catch (error) {
+            console.error("Firebase submit error:", error);
+            toast("Gagal menyimpan data: " + (error.message || "Unknown error"), "error");
+        }
+    };
+
+
+    /* =========================================================
+       EVENT TAHUN PAJAK
+       ========================================================= */
+
+    function bindYearListener() {
+        const yearInput = document.getElementById("metaTahun");
+        if (!yearInput || yearInput.dataset.firebaseBound === "1") return;
+
+        yearInput.dataset.firebaseBound = "1";
+
+        let timer = null;
+        yearInput.addEventListener("change", () => {
+            const year = yearInput.value.trim();
+
+            if (!validYear(year)) {
+                toast("Tahun pajak harus berupa 4 digit.", "error");
+                return;
+            }
+
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                if (getLoggedUser()) {
+                    startRealtimeListeners(year);
+                }
+            }, 150);
+        });
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", bindYearListener, { once: true });
+    } else {
+        bindYearListener();
+    }
+</script>
 </body>
 </html>
