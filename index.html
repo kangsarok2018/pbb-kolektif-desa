@@ -1158,8 +1158,11 @@
             let selDesa = (document.getElementById(ids.desa)?.value || '').trim().toUpperCase();
 
             if (!isAdmin) {
-                selKec = String(window.currentUser?.kecamatan || '').trim().toUpperCase();
-                selDesa = String(window.currentUser?.desa || '').trim().toUpperCase();
+                // PETUGAS: gunakan profil akun. Jika objek currentUser belum tersalin
+                // ke window karena timing UI, gunakan metadata wilayah yang sudah
+                // dikunci oleh initAuthSession sebagai fallback.
+                selKec = String(window.currentUser?.kecamatan || document.getElementById('metaKecamatan')?.value || '').trim().toUpperCase();
+                selDesa = String(window.currentUser?.desa || document.getElementById('metaDesa')?.value || '').trim().toUpperCase();
             }
 
             return base.filter(item => {
@@ -1314,6 +1317,13 @@
                     if (tabBtnLaporan) tabBtnLaporan.classList.add('hidden');
                 }
                 
+                // Sinkronkan semua filter laporan dengan wilayah akun PETUGAS.
+                if (window.currentUser.role === 'petugas') {
+                    ['pendaftaran','pemutakhiran','penghapusan'].forEach(cat => {
+                        if (typeof window.populateReportFilters === 'function') window.populateReportFilters(cat);
+                    });
+                }
+
                 // Selalu set tab aktif kembali ke pendaftaran setiap kali login berhasil
                 window.switchTab('pendaftaran');
 
@@ -2367,11 +2377,13 @@
                 selectedKec = (document.getElementById(ids.kec)?.value || '').trim().toUpperCase();
                 selectedDesa = (document.getElementById(ids.desa)?.value || '').trim().toUpperCase();
 
-                // PETUGAS: identitas cetak wajib mengikuti profil akun,
-                // walaupun select laporan kosong atau belum sempat terisi.
+                // PETUGAS: identitas cetak WAJIB mengikuti wilayah akun.
+                // Fallback ke metadata header yang sudah diisi dan dikunci saat login,
+                // sehingga tidak pernah kembali menjadi SEMUA KECAMATAN/DESA hanya
+                // karena select laporan belum selesai terisi.
                 if (isPetugas) {
-                    selectedKec = String(window.currentUser?.kecamatan || '').trim().toUpperCase();
-                    selectedDesa = String(window.currentUser?.desa || '').trim().toUpperCase();
+                    selectedKec = String(window.currentUser?.kecamatan || document.getElementById('metaKecamatan')?.value || '').trim().toUpperCase();
+                    selectedDesa = String(window.currentUser?.desa || document.getElementById('metaDesa')?.value || '').trim().toUpperCase();
                 }
 
                 // Wilayah cetak mengikuti filter: kosong = keseluruhan untuk ADMIN.
@@ -2423,8 +2435,12 @@
                 if (signSection) signSection.style.display = 'flex';
 
                 const ids = window.getReportFilterIds(category);
-                const selectedKec = (document.getElementById(ids.kec)?.value || '').toUpperCase();
-                const selectedDesa = (document.getElementById(ids.desa)?.value || '').toUpperCase();
+                let selectedKec = (document.getElementById(ids.kec)?.value || '').trim().toUpperCase();
+                let selectedDesa = (document.getElementById(ids.desa)?.value || '').trim().toUpperCase();
+                if (window.currentUser?.role === 'petugas') {
+                    selectedKec = String(window.currentUser?.kecamatan || document.getElementById('metaKecamatan')?.value || '').trim().toUpperCase();
+                    selectedDesa = String(window.currentUser?.desa || document.getElementById('metaDesa')?.value || '').trim().toUpperCase();
+                }
                 const showRegion = !selectedDesa;
                 const regionHead = showRegion ? `<th rowspan="2" class="border border-slate-300">KECAMATAN</th><th rowspan="2" class="border border-slate-300">DESA / KELURAHAN</th>` : '';
                 let thData = '', tbData = '';
@@ -2879,7 +2895,9 @@
             if (dbRole === "petugas") {
                 finalKecamatan = normalize(userData.kecamatan);
                 finalDesa = normalize(userData.desa);
-                finalName = normalize(userData.name || nama);
+                // Nama yang diisi pada form login menjadi nama petugas aktif.
+                // Jika kosong, gunakan nama profil Firebase sebagai fallback.
+                finalName = normalize(nama || userData.name || 'PETUGAS DESA');
 
                 if (!finalKecamatan || !finalDesa) {
                     await signOut(auth);
