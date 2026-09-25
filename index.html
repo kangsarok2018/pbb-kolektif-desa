@@ -1191,8 +1191,32 @@
                 desaSelect.value = oldDesa;
             }
 
-            // Petugas tidak diberi pilihan wilayah di luar data yang memang sudah dibatasi oleh server.
+            // PETUGAS: filter laporan harus otomatis mengikuti wilayah akun.
+            // Jangan biarkan nilai kosong/SEMUA karena itu membuat judul cetak
+            // menjadi SEMUA KECAMATAN / SEMUA DESA walaupun data sudah dibatasi server.
             if (!isAdmin) {
+                const petugasKec = String(window.currentUser?.kecamatan || '').trim().toUpperCase();
+                const petugasDesa = String(window.currentUser?.desa || '').trim().toUpperCase();
+
+                if (petugasKec && kecs.includes(petugasKec)) {
+                    kecSelect.value = petugasKec;
+                } else if (kecs.length === 1) {
+                    kecSelect.value = kecs[0];
+                }
+
+                const kecForDesa = kecSelect.value.toUpperCase();
+                const petugasDesas = [...new Set(source
+                    .filter(x => (x.kecamatan || '').trim().toUpperCase() === kecForDesa)
+                    .map(x => (x.desa || '').trim().toUpperCase())
+                    .filter(Boolean))].sort();
+
+                desaSelect.innerHTML = `<option value="">-- SEMUA DESA / KELURAHAN --</option>` + petugasDesas.map(d => `<option value="${window.escapeHtml(d)}">${window.escapeHtml(d)}</option>`).join('');
+                if (petugasDesa && petugasDesas.some(d => window.normalizeVillageName(d) === window.normalizeVillageName(petugasDesa))) {
+                    desaSelect.value = petugasDesa;
+                } else if (petugasDesas.length === 1) {
+                    desaSelect.value = petugasDesas[0];
+                }
+
                 kecSelect.disabled = true;
                 desaSelect.disabled = true;
             } else {
@@ -2268,7 +2292,45 @@
                 }
             }
 
-            const fileName = `Data_PBB_${thn}_${category.toUpperCase()}_MERANGIN.xlsx`;
+            // Nama file Excel mengikuti filter wilayah yang sedang dipilih,
+            // bukan metadata form/default wilayah.
+            let fileKec = '';
+            let fileDesa = '';
+            if (category === 'laporan') {
+                fileKec = (document.getElementById('filterKecamatanLaporan')?.value || '').toString().trim().toUpperCase();
+                fileDesa = '';
+            } else {
+                const filterIds = {
+                    pendaftaran: { kec: 'filterPendaftaranKecamatan', desa: 'filterPendaftaranDesa' },
+                    pemutakhiran: { kec: 'filterPemutakhiranKecamatan', desa: 'filterPemutakhiranDesa' },
+                    penghapusan: { kec: 'filterPenghapusanKecamatan', desa: 'filterPenghapusanDesa' }
+                };
+                const ids = filterIds[category];
+                if (ids) {
+                    fileKec = (document.getElementById(ids.kec)?.value || '').toString().trim().toUpperCase();
+                    fileDesa = (document.getElementById(ids.desa)?.value || '').toString().trim().toUpperCase();
+                }
+            }
+
+            const safeFilePart = (value, fallback) => {
+                const cleaned = String(value || '')
+                    .trim()
+                    .toUpperCase()
+                    .replace(/DESA\s*\/\s*KELURAHAN/g, 'SEMUA_DESA')
+                    .replace(/[^A-Z0-9]+/g, '_')
+                    .replace(/^_+|_+$/g, '');
+                return cleaned || fallback;
+            };
+
+            const fileKecPart = safeFilePart(fileKec, 'SEMUA_KECAMATAN');
+            const fileDesaPart = category === 'laporan'
+                ? ''
+                : safeFilePart(fileDesa, 'SEMUA_DESA');
+            const wilayahFilePart = fileDesaPart
+                ? `${fileKecPart}_${fileDesaPart}`
+                : fileKecPart;
+
+            const fileName = `Data_PBB_${thn}_${category.toUpperCase()}_${wilayahFilePart}_MERANGIN.xlsx`;
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, category.toUpperCase());
             XLSX.writeFile(workbook, fileName);
