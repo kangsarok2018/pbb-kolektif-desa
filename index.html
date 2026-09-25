@@ -2279,29 +2279,38 @@
         window.printReport = function(category) {
             const list = category === 'laporan' ? [] : window.getReportScopedRecords(category);
 
+            // Untuk laporan, identitas wilayah HARUS mengikuti filter laporan,
+            // bukan metadata form input. Metadata form dapat berisi nilai default
+            // (misalnya KECAMATAN BANGKO / DESA LANGLING) walaupun filter laporan
+            // masih pada posisi SEMUA.
             let thn = (document.getElementById('metaTahun')?.value || '').toString().toUpperCase();
             let rt = (document.getElementById('metaRT')?.value || '').toString().toUpperCase();
-            let desa = (document.getElementById('metaDesa')?.value || '').toString().toUpperCase();
-            let kec = (document.getElementById('metaKecamatan')?.value || '').toString().toUpperCase();
+            let desa = '';
+            let kec = '';
+            let selectedKec = '';
+            let selectedDesa = '';
 
             if (category !== 'laporan') {
                 const ids = window.getReportFilterIds(category);
-                const selectedKec = (document.getElementById(ids.kec)?.value || '').toUpperCase();
-                const selectedDesa = (document.getElementById(ids.desa)?.value || '').toUpperCase();
-                if (selectedKec) kec = selectedKec;
-                if (selectedDesa) desa = selectedDesa;
-                if (list.length > 0) {
-                    if (!kec && list[0].kecamatan) kec = list[0].kecamatan;
-                    if (!desa && list[0].desa) desa = list[0].desa;
-                    if (!rt && list[0].rt) rt = list[0].rt;
-                    if (!thn && list[0].tahun) thn = list[0].tahun;
-                }
+                selectedKec = (document.getElementById(ids.kec)?.value || '').trim().toUpperCase();
+                selectedDesa = (document.getElementById(ids.desa)?.value || '').trim().toUpperCase();
+
+                // Wilayah cetak mengikuti filter: kosong = keseluruhan.
+                kec = selectedKec || 'SEMUA KECAMATAN';
+                desa = selectedDesa || 'SEMUA DESA / KELURAHAN';
+
+                // Tahun tetap dapat mengikuti metadata form, tetapi jangan mengambil
+                // Kecamatan/Desa dari baris pertama data karena itu membuat laporan
+                // keseluruhan terlihat seolah-olah hanya berasal dari satu desa.
+                if (!thn && list.length > 0 && list[0].tahun) thn = list[0].tahun;
+                if (!rt && selectedDesa && list.length > 0 && list[0].rt) rt = list[0].rt;
+            } else {
+                kec = (document.getElementById('metaKecamatan')?.value || '').toString().toUpperCase();
+                desa = (document.getElementById('metaDesa')?.value || '').toString().toUpperCase();
             }
 
             if (!thn) thn = '2026';
             if (!rt) rt = '.......................';
-            if (!desa) desa = 'SEMUA DESA / KELURAHAN';
-            if (!kec) kec = 'SEMUA KECAMATAN';
 
             window.safeSetText('printRT', rt);
             window.safeSetText('printDesa', desa);
