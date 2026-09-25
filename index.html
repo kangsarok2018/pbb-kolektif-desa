@@ -1150,8 +1150,17 @@
             const base = window.recordsData[category] || [];
             const ids = window.getReportFilterIds(category);
             if (!ids) return base;
-            const selKec = (document.getElementById(ids.kec)?.value || '').trim().toUpperCase();
-            const selDesa = (document.getElementById(ids.desa)?.value || '').trim().toUpperCase();
+
+            // PETUGAS: wilayah laporan selalu dipaksa mengikuti profil akun.
+            // Jangan bergantung pada nilai select yang dapat masih kosong/default.
+            const isAdmin = window.currentUser?.role === 'admin';
+            let selKec = (document.getElementById(ids.kec)?.value || '').trim().toUpperCase();
+            let selDesa = (document.getElementById(ids.desa)?.value || '').trim().toUpperCase();
+
+            if (!isAdmin) {
+                selKec = String(window.currentUser?.kecamatan || '').trim().toUpperCase();
+                selDesa = String(window.currentUser?.desa || '').trim().toUpperCase();
+            }
 
             return base.filter(item => {
                 const itemKec = (item.kecamatan || '').trim().toUpperCase();
@@ -2354,10 +2363,18 @@
 
             if (category !== 'laporan') {
                 const ids = window.getReportFilterIds(category);
+                const isPetugas = window.currentUser?.role === 'petugas';
                 selectedKec = (document.getElementById(ids.kec)?.value || '').trim().toUpperCase();
                 selectedDesa = (document.getElementById(ids.desa)?.value || '').trim().toUpperCase();
 
-                // Wilayah cetak mengikuti filter: kosong = keseluruhan.
+                // PETUGAS: identitas cetak wajib mengikuti profil akun,
+                // walaupun select laporan kosong atau belum sempat terisi.
+                if (isPetugas) {
+                    selectedKec = String(window.currentUser?.kecamatan || '').trim().toUpperCase();
+                    selectedDesa = String(window.currentUser?.desa || '').trim().toUpperCase();
+                }
+
+                // Wilayah cetak mengikuti filter: kosong = keseluruhan untuk ADMIN.
                 kec = selectedKec || 'SEMUA KECAMATAN';
                 desa = selectedDesa || 'SEMUA DESA / KELURAHAN';
 
